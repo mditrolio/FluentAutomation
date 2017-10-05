@@ -36,22 +36,22 @@ namespace FluentAutomation
             this.RepackExceptions(() => Parallel.ForEach(this.commandProviders, x => x.Navigate(url)));
         }
 
-        public ElementProxy Find(string selector)
+        public ElementProxy Find(string selector, By findBy)
         {
             var result = new ElementProxy();
 
-            this.RepackExceptions(() => Parallel.ForEach(this.commandProviders, x => result.Elements.Add(new Tuple<ICommandProvider, Func<IElement>>(x, x.Find(selector).Elements.First().Item2))));
+            this.RepackExceptions(() => Parallel.ForEach(this.commandProviders, x => result.Elements.Add(new Tuple<ICommandProvider, Func<IElement>>(x, x.Find(selector, findBy).Elements.First().Item2))));
 
             return result;
         }
 
-        public ElementProxy FindMultiple(string selector)
+        public ElementProxy FindMultiple(string selector, By findBy)
         {
             var result = new ElementProxy();
 
             this.RepackExceptions(() => Parallel.ForEach(this.commandProviders, x =>
             {
-                foreach (var element in x.FindMultiple(selector).Elements)
+                foreach (var element in x.FindMultiple(selector, findBy).Elements)
                 {
                     result.Elements.Add(new Tuple<ICommandProvider, Func<IElement>>(x, element.Item2));
                 }
@@ -67,7 +67,7 @@ namespace FluentAutomation
 
         public void Click(ElementProxy element, int x, int y)
         {
-            this.RepackExceptions(() => Parallel.ForEach(this.commandProviders, xx => xx.Click(xx.Find(element.Element.Selector), x, y)));
+            this.RepackExceptions(() => Parallel.ForEach(this.commandProviders, xx => xx.Click(xx.Find(element.Element.Selector, element.Element.FindBy), x, y)));
         }
 
         public void Click(ElementProxy element)

@@ -20,13 +20,13 @@ namespace FluentAutomation
         }
 
         #region Count
-        public void Count(string selector, int count)
+        public void Count(string selector, int count, By findMethod)
         {
             this.commandProvider.Act(commandType, () =>
             {
                 try
                 {
-                    var elements = this.commandProvider.FindMultiple(selector).Elements;
+                    var elements = this.commandProvider.FindMultiple(selector, findMethod).Elements;
                     if (elements.Count() != count)
                     {
                         this.ReportError("Expected count of elements matching selector [{0}] to be [{1}] but instead it was [{2}]", selector, count, elements.Count());
@@ -42,13 +42,13 @@ namespace FluentAutomation
             });
         }
 
-        public void NotCount(string selector, int count)
+        public void NotCount(string selector, int count, By findMethod)
         {
             this.commandProvider.Act(commandType, () =>
             {
                 try
                 {
-                    var elements = this.commandProvider.FindMultiple(selector).Elements;
+                    var elements = this.commandProvider.FindMultiple(selector, findMethod).Elements;
                     if (elements.Count() == count)
                     {
                         this.ReportError("Expected count of elements matching selector [{0}] not to be [{1}] but it was.", selector, count);
@@ -147,9 +147,9 @@ namespace FluentAutomation
             };
         }
 
-        public void NotCssClass(string selector, string className)
+        public void NotCssClass(string selector, string className, By findMethod)
         {
-            this.NotCssClass(this.commandProvider.Find(selector), className);
+            this.NotCssClass(this.commandProvider.Find(selector, findMethod), className);
         }
 
         public void NotCssClass(ElementProxy element, string className)
@@ -164,9 +164,9 @@ namespace FluentAutomation
             });
         }
 
-        public void CssClass(string selector, string className)
+        public void CssClass(string selector, string className, By findMethod)
         {
-            this.CssClass(this.commandProvider.Find(selector), className);
+            this.CssClass(this.commandProvider.Find(selector, findMethod), className);
         }
 
         public void CssClass(ElementProxy element, string className)
@@ -213,14 +213,14 @@ namespace FluentAutomation
             return result;
         }
 
-        public void CssProperty(string selector, string propertyName, string propertyValue)
+        public void CssProperty(string selector, string propertyName, string propertyValue, By findMethod)
         {
-            this.CssProperty(this.commandProvider.Find(selector), propertyName, propertyValue);
+            this.CssProperty(this.commandProvider.Find(selector, findMethod), propertyName, propertyValue);
         }
 
-        public void NotCssProperty(string selector, string propertyName, string propertyValue)
+        public void NotCssProperty(string selector, string propertyName, string propertyValue, By findMethod)
         {
-            this.NotCssProperty(this.commandProvider.Find(selector), propertyName, propertyValue);
+            this.NotCssProperty(this.commandProvider.Find(selector, findMethod), propertyName, propertyValue);
         }
 
         public void CssProperty(ElementProxy element, string propertyName, string propertyValue)
@@ -259,14 +259,14 @@ namespace FluentAutomation
 
         #region Attributes
 
-        public void Attribute(string selector, string attributeName, string attributeValue)
+        public void Attribute(string selector, string attributeName, string attributeValue, By findMethod)
         {
-            this.Attribute(this.commandProvider.Find(selector), attributeName, attributeValue);
+            this.Attribute(this.commandProvider.Find(selector, findMethod), attributeName, attributeValue);
         }
 
-        public void NotAttribute(string selector, string attributeName, string attributeValue)
+        public void NotAttribute(string selector, string attributeName, string attributeValue, By findMethod)
         {
-            this.NotAttribute(this.commandProvider.Find(selector), attributeName, attributeValue);
+            this.NotAttribute(this.commandProvider.Find(selector, findMethod), attributeName, attributeValue);
         }
 
         public void Attribute(ElementProxy element, string attributeName, string attributeValue)
@@ -358,24 +358,24 @@ namespace FluentAutomation
             };
         }
 
-        public void Text(string selector, string text)
+        public void Text(string selector, string text, By findMethod)
         {
-            this.Text(this.commandProvider.Find(selector), text);
+            this.Text(this.commandProvider.Find(selector, findMethod), text);
         }
 
-        public void NotText(string selector, string text)
+        public void NotText(string selector, string text, By findMethod)
         {
-            this.NotText(this.commandProvider.Find(selector), text);
+            this.NotText(this.commandProvider.Find(selector, findMethod), text);
         }
 
-        public void Text(string selector, Expression<Func<string, bool>> matchFunc)
+        public void Text(string selector, Expression<Func<string, bool>> matchFunc, By findMethod)
         {
-            this.Text(this.commandProvider.Find(selector), matchFunc);
+            this.Text(this.commandProvider.Find(selector, findMethod), matchFunc);
         }
 
-        public void NotText(string selector, Expression<Func<string, bool>> matchFunc)
+        public void NotText(string selector, Expression<Func<string, bool>> matchFunc, By findMethod)
         {
-            this.NotText(this.commandProvider.Find(selector), matchFunc);
+            this.NotText(this.commandProvider.Find(selector, findMethod), matchFunc);
         }
 
         public void Text(ElementProxy element, string text)
@@ -530,24 +530,24 @@ namespace FluentAutomation
             };
         }
 
-        public void Value(string selector, string text)
+        public void Value(string selector, string text, By findMethod)
         {
-            this.Value(this.commandProvider.Find(selector), text);
+            this.Value(this.commandProvider.Find(selector, findMethod), text);
         }
 
-        public void NotValue(string selector, string text)
+        public void NotValue(string selector, string text, By findMethod)
         {
-            this.NotValue(this.commandProvider.Find(selector), text);
+            this.NotValue(this.commandProvider.Find(selector, findMethod), text);
         }
 
-        public void Value(string selector, Expression<Func<string, bool>> matchFunc)
+        public void Value(string selector, Expression<Func<string, bool>> matchFunc, By findMethod)
         {
-            this.Value(this.commandProvider.Find(selector), matchFunc);
+            this.Value(this.commandProvider.Find(selector, findMethod), matchFunc);
         }
 
-        public void NotValue(string selector, Expression<Func<string, bool>> matchFunc)
+        public void NotValue(string selector, Expression<Func<string, bool>> matchFunc, By findMethod)
         {
-            this.NotValue(this.commandProvider.Find(selector), matchFunc);
+            this.NotValue(this.commandProvider.Find(selector, findMethod), matchFunc);
         }
 
         public void Value(ElementProxy element, string value)
@@ -761,9 +761,9 @@ namespace FluentAutomation
         #endregion
 
         #region Exists
-        private bool elementExists(string selector)
+        private bool elementExists(string selector, By findMethod)
         {
-            return this.elementExists(this.commandProvider.Find(selector));
+            return this.elementExists(this.commandProvider.Find(selector, findMethod));
         }
 
         private bool elementExists(ElementProxy element)
@@ -778,11 +778,11 @@ namespace FluentAutomation
             return exists;
         }
 
-        public void Exists(string selector)
+        public void Exists(string selector, By findMethod)
         {
             this.commandProvider.Act(commandType, () =>
             {
-                if (!elementExists(selector))
+                if (!elementExists(selector, findMethod))
                 {
                     this.ReportError("Expected element matching selector [{0}] to exist.", selector);
                 }
@@ -800,17 +800,17 @@ namespace FluentAutomation
             });
         }
 
-        public void NotExists(string selector)
+        public void NotExists(string selector, By findMethod)
         {
             this.commandProvider.Act(commandType, () =>
             {
-                if (elementExists(selector))
+                if (elementExists(selector, findMethod))
                 {
                     this.ReportError("Expected element matching selector [{0}] not to exist.", selector);
                 }
             });
         }
-        
+
         public void NotExists(ElementProxy element)
         {
             this.commandProvider.Act(commandType, () =>
@@ -824,14 +824,14 @@ namespace FluentAutomation
         #endregion
 
         #region Visible
-        public void Visible(string selector)
+        public void Visible(string selector, By findMethod)
         {
-            this.Visible(this.commandProvider.Find(selector));
+            this.Visible(this.commandProvider.Find(selector, findMethod));
         }
 
-        public void NotVisible(string selector)
+        public void NotVisible(string selector, By findMethod)
         {
-            this.NotVisible(this.commandProvider.Find(selector));
+            this.NotVisible(this.commandProvider.Find(selector, findMethod));
         }
 
         public void Visible(ElementProxy element)
@@ -899,7 +899,7 @@ namespace FluentAutomation
                 }
             });
         }
-            
+
         public void AlertNotText(Expression<Func<string, bool>> matchFunc)
         {
             var compiledFunc = matchFunc.Compile();

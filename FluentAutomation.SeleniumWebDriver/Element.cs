@@ -13,14 +13,18 @@ namespace FluentAutomation
     {
         private string selector = null;
 
-        public Element(IWebElement webElement, string selector)
+        public Element(IWebElement webElement, string selector, By findBy)
         {
             this.WebElement = webElement;
             this.selector = selector;
+            this.FindBy = findBy;
             this.tagName = this.WebElement.TagName;
         }
 
         private string tagName = null;
+
+        public By FindBy { get; }
+
         public string TagName
         {
             get

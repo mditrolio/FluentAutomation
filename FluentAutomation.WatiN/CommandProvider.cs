@@ -131,8 +131,8 @@ namespace FluentAutomation
         {
             this.browser.GoTo(uri);
         }
-        
-        public ElementProxy Find(string selector)
+
+        public ElementProxy Find(string selector, By findBy = By.Css)
         {
             return new ElementProxy(this, () =>
             {
@@ -486,7 +486,7 @@ namespace FluentAutomation
         {
             throw new NotImplementedException();
         }
-        
+
         public void Press(string keys)
         {
             this.Act(CommandType.Action, () =>
@@ -593,7 +593,7 @@ namespace FluentAutomation
         {
             throw new FluentException("Due to inconsistent behavior, handling of prompts that accept text entry is disabled when using WatiN with FluentAutomation.");
         }
-        
+
         public void Visible(ElementProxy element, Action<bool> action)
         {
             this.Act(CommandType.Action, () =>

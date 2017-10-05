@@ -16,8 +16,8 @@ namespace FluentAutomation.Interfaces
         string Source { get; }
 
         void Navigate(Uri url);
-        ElementProxy Find(string selector);
-        ElementProxy FindMultiple(string selector);
+        ElementProxy Find(string selector, By findMethod);
+        ElementProxy FindMultiple(string selector, By findMethod);
 
         void Click(int x, int y);
         void Click(ElementProxy element, int x, int y);

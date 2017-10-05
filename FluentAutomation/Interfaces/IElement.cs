@@ -9,6 +9,7 @@ namespace FluentAutomation.Interfaces
     public interface IElement
     {
         string Selector { get; }
+        By FindBy { get; }
         string TagName { get; }
         IElementAttributeSelector Attributes { get; }
 

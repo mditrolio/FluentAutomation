@@ -61,7 +61,7 @@ a){var b=F.exec(a);b&&(b[1]=(b[1]||"""").toLowerCase(),b[3]=b[3]&&new RegExp(""(
             return new BySizzle(selector);
         }
         
-        public class BySizzle : By
+        public class BySizzle : OpenQA.Selenium.By
         {
             private readonly string serializedSelector = null;
 

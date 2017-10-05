@@ -14,7 +14,7 @@ namespace FluentAutomation
         internal readonly ICommandProvider commandProvider = null;
         internal readonly IAssertProvider assertProvider = null;
         internal FluentSettings settings = null;
-        
+
         public ActionSyntaxProvider(ICommandProvider commandProvider, IAssertProvider assertProvider, FluentSettings settings)
         {
             this.commandProvider = commandProvider.WithConfig(settings);
@@ -30,13 +30,7 @@ namespace FluentAutomation
         }
 
         #region Direct Execution Actions
-        public IActionSyntaxProvider Open(string url)
-        {
-            if (url.StartsWith("/"))
-                return this.Open(new Uri(url, UriKind.Relative));
-            else
-                return this.Open(new Uri(url, UriKind.Absolute));
-        }
+        public IActionSyntaxProvider Open(string url) => this.Open(url.StartsWith("/") ? new Uri(url, UriKind.Relative) : new Uri(url, UriKind.Absolute));
 
         public IActionSyntaxProvider Open(Uri url)
         {
@@ -44,15 +38,13 @@ namespace FluentAutomation
             return this;
         }
 
-        public ElementProxy Find(string selector)
-        {
-            return this.commandProvider.Find(selector);
-        }
+        public ElementProxy Find(string selector) => this.Find(selector, Defaults.FindMethod);
 
-        public ElementProxy FindMultiple(string selector)
-        {
-            return this.commandProvider.FindMultiple(selector);
-        }
+        public ElementProxy Find(string selector, By findMethod) => this.commandProvider.Find(selector, findMethod);
+
+        public ElementProxy FindMultiple(string selector) => this.FindMultiple(selector, Defaults.FindMethod);
+
+        public ElementProxy FindMultiple(string selector, By findMethod) => this.commandProvider.FindMultiple(selector, findMethod);
 
         public IActionSyntaxProvider Click(int x, int y)
         {
@@ -60,10 +52,9 @@ namespace FluentAutomation
             return this;
         }
 
-        public IActionSyntaxProvider Click(string selector, int x, int y)
-        {
-            return this.Click(this.Find(selector), x, y);
-        }
+        public IActionSyntaxProvider Click(string selector, int x, int y) => this.Click(selector, x, y, Defaults.FindMethod);
+
+        public IActionSyntaxProvider Click(string selector, int x, int y, By findMethod) => this.Click(this.Find(selector, findMethod), x, y);
 
         public IActionSyntaxProvider Click(ElementProxy element, int x, int y)
         {
@@ -71,10 +62,9 @@ namespace FluentAutomation
             return this;
         }
 
-        public IActionSyntaxProvider Click(string selector)
-        {
-            return this.Click(this.Find(selector));
-        }
+        public IActionSyntaxProvider Click(string selector) => this.Click(selector, Defaults.FindMethod);
+
+        public IActionSyntaxProvider Click(string selector, By findMethod) => this.Click(this.Find(selector, findMethod));
 
         public IActionSyntaxProvider Click(ElementProxy element)
         {
@@ -100,10 +90,9 @@ namespace FluentAutomation
             return this;
         }
 
-        public IActionSyntaxProvider Scroll(string selector)
-        {
-            return this.Scroll(this.Find(selector));
-        }
+        public IActionSyntaxProvider Scroll(string selector) => this.Scroll(selector, Defaults.FindMethod);
+
+        public IActionSyntaxProvider Scroll(string selector, By findMethod) => this.Scroll(this.Find(selector, findMethod));
 
         public IActionSyntaxProvider Scroll(ElementProxy element)
         {
@@ -117,10 +106,10 @@ namespace FluentAutomation
             return this;
         }
 
-        public IActionSyntaxProvider DoubleClick(string selector, int x, int y)
-        {
-            return this.DoubleClick(this.Find(selector), x, y);
-        }
+
+        public IActionSyntaxProvider DoubleClick(string selector, int x, int y) => this.DoubleClick(selector, x, y, Defaults.FindMethod);
+
+        public IActionSyntaxProvider DoubleClick(string selector, int x, int y, By findMethod) => this.DoubleClick(this.Find(selector, findMethod), x, y);
 
         public IActionSyntaxProvider DoubleClick(ElementProxy element, int x, int y)
         {
@@ -128,10 +117,9 @@ namespace FluentAutomation
             return this;
         }
 
-        public IActionSyntaxProvider DoubleClick(string selector)
-        {
-            return this.DoubleClick(this.Find(selector));
-        }
+        public IActionSyntaxProvider DoubleClick(string selector) => this.DoubleClick(selector, Defaults.FindMethod);
+
+        public IActionSyntaxProvider DoubleClick(string selector, By findMethod) => this.DoubleClick(this.Find(selector, findMethod));
 
         public IActionSyntaxProvider DoubleClick(ElementProxy element)
         {
@@ -145,10 +133,9 @@ namespace FluentAutomation
             return this;
         }
 
-        public IActionSyntaxProvider RightClick(string selector, int x, int y)
-        {
-            return this.RightClick(this.Find(selector), x, y);
-        }
+        public IActionSyntaxProvider RightClick(string selector, int x, int y) => this.RightClick(selector, x, y, Defaults.FindMethod);
+
+        public IActionSyntaxProvider RightClick(string selector, int x, int y, By findMethod) => this.RightClick(this.Find(selector, findMethod), x, y);
 
         public IActionSyntaxProvider RightClick(ElementProxy element, int x, int y)
         {
@@ -157,10 +144,9 @@ namespace FluentAutomation
         }
 
 
-        public IActionSyntaxProvider RightClick(string selector)
-        {
-            return this.RightClick(this.Find(selector));
-        }
+        public IActionSyntaxProvider RightClick(string selector) => this.RightClick(selector, Defaults.FindMethod);
+
+        public IActionSyntaxProvider RightClick(string selector, By findMethod) => this.RightClick(this.Find(selector, findMethod));
 
         public IActionSyntaxProvider RightClick(ElementProxy element)
         {
@@ -174,10 +160,9 @@ namespace FluentAutomation
             return this;
         }
 
-        public IActionSyntaxProvider Hover(string selector, int x, int y)
-        {
-            return this.Hover(this.Find(selector), x, y);
-        }
+        public IActionSyntaxProvider Hover(string selector, int x, int y) => this.Hover(selector, x, y, Defaults.FindMethod);
+
+        public IActionSyntaxProvider Hover(string selector, int x, int y, By findMethod) => this.Hover(this.Find(selector, findMethod), x, y);
 
         public IActionSyntaxProvider Hover(ElementProxy element, int x, int y)
         {
@@ -185,10 +170,9 @@ namespace FluentAutomation
             return this;
         }
 
-        public IActionSyntaxProvider Hover(string selector)
-        {
-            return this.Hover(this.Find(selector));
-        }
+        public IActionSyntaxProvider Hover(string selector) => this.Hover(selector, Defaults.FindMethod);
+
+        public IActionSyntaxProvider Hover(string selector, By findMethod) => this.Hover(this.Find(selector, findMethod));
 
         public IActionSyntaxProvider Hover(ElementProxy element)
         {
@@ -196,10 +180,9 @@ namespace FluentAutomation
             return this;
         }
 
-        public IActionSyntaxProvider Focus(string selector)
-        {
-            return this.Focus(this.Find(selector));
-        }
+        public IActionSyntaxProvider Focus(string selector) => this.Focus(selector, Defaults.FindMethod);
+
+        public IActionSyntaxProvider Focus(string selector, By findMethod) => this.Focus(this.Find(selector, findMethod));
 
         public IActionSyntaxProvider Focus(ElementProxy element)
         {
@@ -231,10 +214,7 @@ namespace FluentAutomation
             return this;
         }
 
-        public IActionSyntaxProvider Wait(int seconds)
-        {
-            return this.Wait(TimeSpan.FromSeconds(seconds));
-        }
+        public IActionSyntaxProvider Wait(int seconds) => this.Wait(TimeSpan.FromSeconds(seconds));
 
         public IActionSyntaxProvider Wait(TimeSpan timeSpan)
         {
@@ -254,10 +234,7 @@ namespace FluentAutomation
             return this;
         }
 
-        public IActionSyntaxProvider WaitUntil(Expression<Func<bool>> conditionFunc, int secondsToWait)
-        {
-            return this.WaitUntil(conditionFunc, TimeSpan.FromSeconds(secondsToWait));
-        }
+        public IActionSyntaxProvider WaitUntil(Expression<Func<bool>> conditionFunc, int secondsToWait) => this.WaitUntil(conditionFunc, TimeSpan.FromSeconds(secondsToWait));
 
         public IActionSyntaxProvider WaitUntil(Expression<Func<bool>> conditionFunc, TimeSpan timeout)
         {
@@ -265,10 +242,7 @@ namespace FluentAutomation
             return this;
         }
 
-        public IActionSyntaxProvider WaitUntil(Expression<Action> conditionAction, int secondsToWait)
-        {
-            return this.WaitUntil(conditionAction, TimeSpan.FromSeconds(secondsToWait));
-        }
+        public IActionSyntaxProvider WaitUntil(Expression<Action> conditionAction, int secondsToWait) => this.WaitUntil(conditionAction, TimeSpan.FromSeconds(secondsToWait));
 
         public IActionSyntaxProvider WaitUntil(Expression<Action> conditionAction, TimeSpan timeout)
         {
@@ -276,20 +250,16 @@ namespace FluentAutomation
             return this;
         }
 
-        public IActionSyntaxProvider Upload(string selector, string fileName)
-        {
-            return this.Upload(selector, 0, 0, fileName);
-        }
+        public IActionSyntaxProvider Upload(string selector, string fileName) => this.Upload(selector, fileName, Defaults.FindMethod);
 
-        public IActionSyntaxProvider Upload(string selector, int x, int y, string fileName)
-        {
-            return this.Upload(this.Find(selector), x, y, fileName);
-        }
+        public IActionSyntaxProvider Upload(string selector, string fileName, By findMethod) => this.Upload(selector, 0, 0, fileName, findMethod);
 
-        public IActionSyntaxProvider Upload(ElementProxy element, string fileName)
-        {
-            return this.Upload(element, 0, 0, fileName);
-        }
+
+        public IActionSyntaxProvider Upload(string selector, int x, int y, string fileName) => this.Upload(selector, x, y, fileName, Defaults.FindMethod);
+
+        public IActionSyntaxProvider Upload(string selector, int x, int y, string fileName, By findMethod) => this.Upload(this.Find(selector, findMethod), x, y, fileName);
+
+        public IActionSyntaxProvider Upload(ElementProxy element, string fileName) => this.Upload(element, 0, 0, fileName);
 
         public IActionSyntaxProvider Upload(ElementProxy element, int x, int y, string fileName)
         {
@@ -333,10 +303,7 @@ namespace FluentAutomation
             /// <summary>
             /// Switch back to the primary window
             /// </summary>
-            public IActionSyntaxProvider Window()
-            {
-                return this.Window(string.Empty);
-            }
+            public IActionSyntaxProvider Window() => this.Window(string.Empty);
 
             /// <summary>
             /// Switch to a frame/iframe via page selector or ID
@@ -352,10 +319,7 @@ namespace FluentAutomation
             /// Switch back to the top-level document
             /// </summary>
             /// <returns></returns>
-            public IActionSyntaxProvider Frame()
-            {
-                return this.Frame(string.Empty);
-            }
+            public IActionSyntaxProvider Frame() => this.Frame(string.Empty);
 
             /// <summary>
             /// Switch focus to a previously selected frame/iframe
@@ -368,34 +332,24 @@ namespace FluentAutomation
                 return this.syntaxProvider;
             }
         }
-    
+
         #endregion
 
         #region Drag/Drop
-        public DragDropSyntaxProvider Drag(string selector)
-        {
-            return this.Drag(this.Find(selector));
-        }
 
-        public DragDropSyntaxProvider Drag(ElementProxy element)
-        {
-            return new DragDropSyntaxProvider(this, element);
-        }
+        public DragDropSyntaxProvider Drag(string selector) => this.Drag(selector, Defaults.FindMethod);
 
-        public DragDropSyntaxProvider Drag(string selector, int sourceX, int sourceY)
-        {
-            return this.Drag(this.Find(selector), sourceX, sourceY);
-        }
-        
-        public DragDropSyntaxProvider Drag(ElementProxy element, int sourceX, int sourceY)
-        {
-            return new DragDropSyntaxProvider(this, element, sourceX, sourceY);
-        }
+        public DragDropSyntaxProvider Drag(string selector, By findMethod) => this.Drag(this.Find(selector, findMethod));
 
-        public DragDropByPositionSyntaxProvider Drag(int sourceX, int sourceY)
-        {
-            return new DragDropByPositionSyntaxProvider(this, sourceX, sourceY);
-        }
+        public DragDropSyntaxProvider Drag(ElementProxy element) => new DragDropSyntaxProvider(this, element);
+
+        public DragDropSyntaxProvider Drag(string selector, int sourceX, int sourceY) => this.Drag(selector, sourceX, sourceY, Defaults.FindMethod);
+
+        public DragDropSyntaxProvider Drag(string selector, int sourceX, int sourceY, By findMethod) => this.Drag(this.Find(selector, findMethod), sourceX, sourceY);
+
+        public DragDropSyntaxProvider Drag(ElementProxy element, int sourceX, int sourceY) => new DragDropSyntaxProvider(this, element, sourceX, sourceY);
+
+        public DragDropByPositionSyntaxProvider Drag(int sourceX, int sourceY) => new DragDropByPositionSyntaxProvider(this, sourceX, sourceY);
 
         public class DragDropSyntaxProvider
         {
@@ -418,14 +372,14 @@ namespace FluentAutomation
                 this.offsetY = offsetY;
             }
 
-            /// <summary>
-            /// End Drag/Drop operation at element matching <paramref name="selector"/>.
-            /// </summary>
-            /// <param name="selector">Sizzle selector.</param>
-            public IActionSyntaxProvider To(string selector)
-            {
-                return this.To(this.syntaxProvider.Find(selector));
-            }
+            /// <summary>End Drag/Drop operation at element matching <paramref name="selector" />.</summary>
+            /// <param name="selector">The selector.</param>
+            public IActionSyntaxProvider To(string selector) => this.To(selector, Defaults.FindMethod);
+
+            /// <summary>End Drag/Drop operation at element matching <paramref name="selector" />.</summary>
+            /// <param name="selector">The selector.</param>
+            /// <param name="findMethod">The find method.</param>
+            public IActionSyntaxProvider To(string selector, By findMethod) => this.To(this.syntaxProvider.Find(selector, findMethod));
 
             /// <summary>
             /// End Drag/Drop operation at specified <paramref name="targetElement"/>.
@@ -441,20 +395,17 @@ namespace FluentAutomation
                 {
                     this.syntaxProvider.commandProvider.DragAndDrop(this.sourceElement, targetElement);
                 }
-                
+
                 return this.syntaxProvider;
             }
 
-            /// <summary>
-            /// End Drag/Drop operation at element specified by <paramref name="selector"/> with offset.
-            /// </summary>
-            /// <param name="selectr"></param>
+            /// <summary>End Drag/Drop operation at element specified by <paramref name="selector" /> with offset.</summary>
+            /// <param name="selector">The selector.</param>
             /// <param name="targetOffsetX">X-offset for drop.</param>
             /// <param name="targetOffsetY">Y-offset for drop.</param>
-            public IActionSyntaxProvider To(string selector, int targetOffsetX, int targetOffsetY)
-            {
-                return this.To(this.syntaxProvider.Find(selector), targetOffsetX, targetOffsetY);
-            }
+            /// <param name="findMethod">The find method.</param>
+            public IActionSyntaxProvider To(string selector, int targetOffsetX, int targetOffsetY, By findMethod = Defaults.FindMethod)
+                => this.To(this.syntaxProvider.Find(selector, findMethod), targetOffsetX, targetOffsetY);
 
             /// <summary>
             /// End Drag/Drop operation at specified <paramref name="targetElement"/>.
@@ -481,7 +432,7 @@ namespace FluentAutomation
                 this.sourceX = sourceX;
                 this.sourceY = sourceY;
             }
-            
+
             /// <summary>
             /// End Drag/Drop operation at specified coordinates.
             /// </summary>
@@ -493,34 +444,35 @@ namespace FluentAutomation
                 return this.syntaxProvider;
             }
 
-            /// <summary>
-            /// End Drag/Drop operation at the element specified by <paramref name="selector"/>.
-            /// </summary>
-            /// <param name="selector"></param>
-            public void To(string selector)
-            {
-                this.To(this.syntaxProvider.Find(selector));
-            }
+            /// <summary>End Drag/Drop operation at the element specified by <paramref name="selector" />.</summary>
+            /// <param name="selector">The selector.</param>
+            public void To(string selector) => this.To(selector, Defaults.FindMethod);
+
+            /// <summary>End Drag/Drop operation at the element specified by <paramref name="selector" />.</summary>
+            /// <param name="selector">The selector.</param>
+            /// <param name="findMethod">The find method.</param>
+            public void To(string selector, By findMethod) => this.To(this.syntaxProvider.Find(selector, findMethod));
 
             /// <summary>
             /// End Drag/Drop operation at specified <paramref name="targetElement"/>.
             /// </summary>
             /// <param name="targetElement">IElement factory function.</param>
             public void To(ElementProxy targetElement)
-            {
-                this.syntaxProvider.commandProvider.DragAndDrop(this.syntaxProvider.commandProvider.Find("html"), this.sourceX, this.sourceY, targetElement, 0, 0);
-            }
+                => this.syntaxProvider.commandProvider.DragAndDrop(this.syntaxProvider.commandProvider.Find("html", Defaults.FindMethod), this.sourceX, this.sourceY, targetElement, 0, 0);
 
-            /// <summary>
-            /// End Drag/Drop operation at the element specified by <paramref name="selector"/>.
-            /// </summary>
-            /// <param name="selector"></param>
+            /// <summary>End Drag/Drop operation at the element specified by <paramref name="selector" />.</summary>
+            /// <param name="selector">The selector.</param>
             /// <param name="targetOffsetX">X-offset for drop.</param>
             /// <param name="targetOffsetY">Y-offset for drop.</param>
-            public void To(string selector, int targetOffsetX, int targetOffsetY)
-            {
-                this.To(this.syntaxProvider.Find(selector), targetOffsetX, targetOffsetY);
-            }
+            public void To(string selector, int targetOffsetX, int targetOffsetY) => this.To(selector, targetOffsetX, targetOffsetY, Defaults.FindMethod);
+
+            /// <summary>End Drag/Drop operation at the element specified by <paramref name="selector" />.</summary>
+            /// <param name="selector">The selector.</param>
+            /// <param name="targetOffsetX">X-offset for drop.</param>
+            /// <param name="targetOffsetY">Y-offset for drop.</param>
+            /// <param name="findMethod">The find method.</param>
+            public void To(string selector, int targetOffsetX, int targetOffsetY, By findMethod)
+                => this.To(this.syntaxProvider.Find(selector, findMethod), targetOffsetX, targetOffsetY);
 
             /// <summary>
             /// End Drag/Drop operation at specified <paramref name="targetElement"/>.
@@ -529,32 +481,18 @@ namespace FluentAutomation
             /// <param name="targetOffsetX">X-offset for drop.</param>
             /// <param name="targetOffsetY">Y-offset for drop.</param>
             public void To(ElementProxy targetElement, int targetOffsetX, int targetOffsetY)
-            {
-                this.syntaxProvider.commandProvider.DragAndDrop(this.syntaxProvider.commandProvider.Find("html"), this.sourceX, this.sourceY, targetElement, targetOffsetX, targetOffsetY);
-            }
+                => this.syntaxProvider.commandProvider.DragAndDrop(this.syntaxProvider.commandProvider.Find("html", Defaults.FindMethod), this.sourceX, this.sourceY, targetElement, targetOffsetX, targetOffsetY);
         }
         #endregion
 
         #region <input />, <textarea />
-        public TextAppendSyntaxProvider Append(string text)
-        {
-            return new TextAppendSyntaxProvider(this, text);
-        }
+        public TextAppendSyntaxProvider Append(string text) => new TextAppendSyntaxProvider(this, text);
 
-        public TextAppendSyntaxProvider Append(dynamic nonString)
-        {
-            return this.Append(nonString.ToString());
-        }
+        public TextAppendSyntaxProvider Append(dynamic nonString) => this.Append(nonString.ToString());
 
-        public TextEntrySyntaxProvider Enter(string text)
-        {
-            return new TextEntrySyntaxProvider(this, text);
-        }
+        public TextEntrySyntaxProvider Enter(string text) => new TextEntrySyntaxProvider(this, text);
 
-        public TextEntrySyntaxProvider Enter(dynamic nonString)
-        {
-            return this.Enter(nonString.ToString());
-        }
+        public TextEntrySyntaxProvider Enter(dynamic nonString) => this.Enter(nonString.ToString());
 
         public class TextEntrySyntaxProvider
         {
@@ -579,14 +517,14 @@ namespace FluentAutomation
                 return this;
             }
 
-            /// <summary>
-            /// Enter text into input or textarea element matching <paramref name="selector"/>.
-            /// </summary>
-            /// <param name="selector">Sizzle selector.</param>
-            public IActionSyntaxProvider In(string selector)
-            {
-                return this.In(this.syntaxProvider.Find(selector));
-            }
+            /// <summary>Enter text into input or textarea element matching <paramref name="selector" />.</summary>
+            /// <param name="selector">The selector.</param>
+            public IActionSyntaxProvider In(string selector) => this.In(selector, Defaults.FindMethod);
+
+            /// <summary>Enter text into input or textarea element matching <paramref name="selector" />.</summary>
+            /// <param name="selector">The selector.</param>
+            /// <param name="findMethod">The find method.</param>
+            public IActionSyntaxProvider In(string selector, By findMethod) => this.In(this.syntaxProvider.Find(selector, findMethod));
 
             /// <summary>
             /// Enter text into specified <paramref name="element"/>.
@@ -650,14 +588,14 @@ namespace FluentAutomation
                 return this;
             }
 
-            /// <summary>
-            /// Enter text into input or textarea element matching <paramref name="selector"/>.
-            /// </summary>
-            /// <param name="selector">Sizzle selector.</param>
-            public IActionSyntaxProvider To(string selector)
-            {
-                return this.To(this.syntaxProvider.Find(selector));
-            }
+            /// <summary>Enter text into input or textarea element matching <paramref name="selector" />.</summary>
+            /// <param name="selector">The selector.</param>
+            public IActionSyntaxProvider To(string selector) => this.To(selector, Defaults.FindMethod);
+
+            /// <summary>Enter text into input or textarea element matching <paramref name="selector" />.</summary>
+            /// <param name="selector">The selector.</param>
+            /// <param name="findMethod">The find method.</param>
+            public IActionSyntaxProvider To(string selector, By findMethod) => this.To(this.syntaxProvider.Find(selector, findMethod));
 
             /// <summary>
             /// Enter text into specified <paramref name="element"/>.
@@ -683,36 +621,18 @@ namespace FluentAutomation
         #endregion
 
         #region <select />
-        public SelectSyntaxProvider Select(string value)
-        {
-            return new SelectSyntaxProvider(this, value, SelectionOption.Text);
-        }
+        public SelectSyntaxProvider Select(string value) => new SelectSyntaxProvider(this, value, SelectionOption.Text);
 
-        public SelectSyntaxProvider Select(Option mode, string value)
-        {
-            return new SelectSyntaxProvider(this, value, mode == Option.Text ? SelectionOption.Text : SelectionOption.Value);
-        }
+        public SelectSyntaxProvider Select(Option mode, string value) => new SelectSyntaxProvider(this, value, mode == Option.Text ? SelectionOption.Text : SelectionOption.Value);
 
-        public SelectSyntaxProvider Select(params string[] values)
-        {
-            return new SelectSyntaxProvider(this, values, SelectionOption.Text);
-        }
+        public SelectSyntaxProvider Select(params string[] values) => new SelectSyntaxProvider(this, values, SelectionOption.Text);
 
-        public SelectSyntaxProvider Select(Option mode, params string[] values)
-        {
-            return new SelectSyntaxProvider(this, values, mode == Option.Text ? SelectionOption.Text : SelectionOption.Value);
-        }
+        public SelectSyntaxProvider Select(Option mode, params string[] values) => new SelectSyntaxProvider(this, values, mode == Option.Text ? SelectionOption.Text : SelectionOption.Value);
 
-        public SelectSyntaxProvider Select(int index)
-        {
-            return new SelectSyntaxProvider(this, index, SelectionOption.Index);
-        }
+        public SelectSyntaxProvider Select(int index) => new SelectSyntaxProvider(this, index, SelectionOption.Index);
 
-        public SelectSyntaxProvider Select(params int[] indices)
-        {
-            return new SelectSyntaxProvider(this, indices, SelectionOption.Index);
-        }
-        
+        public SelectSyntaxProvider Select(params int[] indices) => new SelectSyntaxProvider(this, indices, SelectionOption.Index);
+
         public class SelectSyntaxProvider
         {
             protected readonly ActionSyntaxProvider syntaxProvider = null;
@@ -726,14 +646,14 @@ namespace FluentAutomation
                 this.mode = mode;
             }
 
-            /// <summary>
-            /// Select from element matching <paramref name="selector"/>.
-            /// </summary>
-            /// <param name="selector">Sizzle selector.</param>
-            public IActionSyntaxProvider From(string selector)
-            {
-                return this.From(this.syntaxProvider.Find(selector));
-            }
+            /// <summary>Select from element matching <paramref name="selector" />.</summary>
+            /// <param name="selector">The selector.</param>
+            public IActionSyntaxProvider From(string selector) => this.From(selector, Defaults.FindMethod);
+
+            /// <summary>Select from element matching <paramref name="selector" />.</summary>
+            /// <param name="selector">The selector.</param>
+            /// <param name="findMethod">The find method.</param>
+            public IActionSyntaxProvider From(string selector, By findMethod) => this.From(this.syntaxProvider.Find(selector, findMethod));
 
             /// <summary>
             /// Select from specified <paramref name="element"/>.
@@ -808,10 +728,7 @@ namespace FluentAutomation
         #endregion
 
         private bool isDisposed = false;
-        public bool IsDisposed()
-        {
-            return isDisposed;
-        }
+        public bool IsDisposed() => isDisposed;
 
         public void Dispose()
         {

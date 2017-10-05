@@ -37,14 +37,14 @@ namespace FluentAutomation
             this.providers = commandProviders.Select(x => new KeyValuePair<IAssertProvider, ICommandProvider>(new AssertProvider(x), x)).ToList();
         }
 
-        public void Count(string selector, int count)
+        public void Count(string selector, int count, By findMethod)
         {
-            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).Count(selector, count));
+            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).Count(selector, count, findMethod));
         }
 
-        public void NotCount(string selector, int count)
+        public void NotCount(string selector, int count, By findMethod)
         {
-            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).NotCount(selector, count));
+            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).NotCount(selector, count, findMethod));
         }
 
         public void Count(ElementProxy element, int count)
@@ -63,14 +63,14 @@ namespace FluentAutomation
             });
         }
 
-        public void CssClass(string selector, string className)
+        public void CssClass(string selector, string className, By findMethod)
         {
-            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).CssClass(selector, className));
+            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).CssClass(selector, className, findMethod));
         }
 
-        public void NotCssClass(string selector, string className)
+        public void NotCssClass(string selector, string className, By findMethod)
         {
-            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).NotCssClass(selector, className));
+            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).NotCssClass(selector, className, findMethod));
         }
 
         public void CssClass(ElementProxy element, string className)
@@ -89,14 +89,14 @@ namespace FluentAutomation
             });
         }
 
-        public void Text(string selector, string text)
+        public void Text(string selector, string text, By findMethod)
         {
-            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).Text(selector, text));
+            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).Text(selector, text, findMethod));
         }
 
-        public void NotText(string selector, string text)
+        public void NotText(string selector, string text, By findMethod)
         {
-            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).NotText(selector, text));
+            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).NotText(selector, text, findMethod));
         }
 
         public void Text(ElementProxy element, string text)
@@ -115,14 +115,14 @@ namespace FluentAutomation
             });
         }
 
-        public void Text(string selector, System.Linq.Expressions.Expression<Func<string, bool>> matchFunc)
+        public void Text(string selector, System.Linq.Expressions.Expression<Func<string, bool>> matchFunc, By findMethod)
         {
-            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).Text(selector, matchFunc));
+            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).Text(selector, matchFunc, findMethod));
         }
 
-        public void NotText(string selector, System.Linq.Expressions.Expression<Func<string, bool>> matchFunc)
+        public void NotText(string selector, System.Linq.Expressions.Expression<Func<string, bool>> matchFunc, By findMethod)
         {
-            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).NotText(selector, matchFunc));
+            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).NotText(selector, matchFunc, findMethod));
         }
 
         public void Text(ElementProxy element, System.Linq.Expressions.Expression<Func<string, bool>> matchFunc)
@@ -141,14 +141,14 @@ namespace FluentAutomation
             });
         }
 
-        public void Value(string selector, string value)
+        public void Value(string selector, string value, By findMethod)
         {
-            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).Value(selector, value));
+            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).Value(selector, value, findMethod));
         }
 
-        public void NotValue(string selector, string value)
+        public void NotValue(string selector, string value, By findMethod)
         {
-            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).NotValue(selector, value));
+            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).NotValue(selector, value, findMethod));
         }
 
         public void Value(ElementProxy element, string value)
@@ -167,14 +167,14 @@ namespace FluentAutomation
             });
         }
 
-        public void Value(string selector, System.Linq.Expressions.Expression<Func<string, bool>> matchFunc)
+        public void Value(string selector, System.Linq.Expressions.Expression<Func<string, bool>> matchFunc, By findMethod)
         {
-            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).Value(selector, matchFunc));
+            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).Value(selector, matchFunc, findMethod));
         }
 
-        public void NotValue(string selector, System.Linq.Expressions.Expression<Func<string, bool>> matchFunc)
+        public void NotValue(string selector, System.Linq.Expressions.Expression<Func<string, bool>> matchFunc, By findMethod)
         {
-            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).NotValue(selector, matchFunc));
+            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).NotValue(selector, matchFunc, findMethod));
         }
 
         public void Value(ElementProxy element, System.Linq.Expressions.Expression<Func<string, bool>> matchFunc)
@@ -232,14 +232,14 @@ namespace FluentAutomation
             Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).NotThrows(matchAction));
         }
 
-        public void Exists(string selector)
+        public void Exists(string selector, By findMethod)
         {
-            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).Exists(selector));
+            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).Exists(selector, findMethod));
         }
 
-        public void NotExists(string selector)
+        public void NotExists(string selector, By findMethod)
         {
-            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).NotExists(selector));
+            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).NotExists(selector, findMethod));
         }
 
         public void Exists(ElementProxy element)
@@ -272,14 +272,14 @@ namespace FluentAutomation
             Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).AlertNotText(matchFunc));
         }
 
-        public void Visible(string selector)
+        public void Visible(string selector, By findMethod)
         {
-            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).Visible(selector));
+            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).Visible(selector, findMethod));
         }
 
-        public void NotVisible(string selector)
+        public void NotVisible(string selector, By findMethod)
         {
-            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).NotVisible(selector));
+            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).NotVisible(selector, findMethod));
         }
 
         public void Visible(ElementProxy element)
@@ -292,14 +292,14 @@ namespace FluentAutomation
             Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).NotVisible(element));
         }
 
-        public void CssProperty(string selector, string propertyName, string propertyValue)
+        public void CssProperty(string selector, string propertyName, string propertyValue, By findMethod)
         {
-            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).CssProperty(selector, propertyName, propertyValue));
+            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).CssProperty(selector, propertyName, propertyValue, findMethod));
         }
 
-        public void NotCssProperty(string selector, string propertyName, string propertyValue)
+        public void NotCssProperty(string selector, string propertyName, string propertyValue, By findMethod)
         {
-            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).NotCssProperty(selector, propertyName, propertyValue));
+            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).NotCssProperty(selector, propertyName, propertyValue, findMethod));
         }
 
         public void CssProperty(ElementProxy element, string propertyName, string propertyValue)
@@ -312,14 +312,14 @@ namespace FluentAutomation
             Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).NotCssProperty(element, propertyName, propertyValue));
         }
 
-        public void Attribute(string selector, string attributeName, string attributeValue)
+        public void Attribute(string selector, string attributeName, string attributeValue, By findMethod)
         {
-            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).Attribute(selector, attributeName, attributeValue));
+            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).Attribute(selector, attributeName, attributeValue, findMethod));
         }
 
-        public void NotAttribute(string selector, string attributeName, string attributeValue)
+        public void NotAttribute(string selector, string attributeName, string attributeValue, By findMethod)
         {
-            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).NotAttribute(selector, attributeName, attributeValue));
+            Parallel.ForEach(this.providers, x => this.BuildAssertProvider(x.Key).NotAttribute(selector, attributeName, attributeValue, findMethod));
         }
 
         public void Attribute(ElementProxy element, string attributeName, string attributeValue)
