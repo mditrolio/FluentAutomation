@@ -1,17 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Xunit;
-
-namespace FluentAutomation.Tests.Base
+﻿namespace FluentAutomation.Tests.Base
 {
+    using System.Linq;
+
+    using Xunit;
+
     public class ElementTests : BaseTest
     {
         public ElementTests()
-            : base()
         {
             InputsPage.Go();
+        }
+
+        [Fact]
+        public void AttributeTests()
+        {
+            Assert.True(I.Find(InputsPage.TextControlSelector).Element.Attributes.Get("id") == InputsPage.TextControlSelector.Substring(1));
         }
 
         [Fact]
@@ -23,9 +26,17 @@ namespace FluentAutomation.Tests.Base
         }
 
         [Fact]
-        public void AttributeTests()
+        public void ElementOtherParamsTests()
         {
-            Assert.True(I.Find(InputsPage.TextControlSelector).Element.Attributes.Get("id") == InputsPage.TextControlSelector.Substring(1));
+            Assert.True(I.Find(InputsPage.InputButtonControlSelector).Element.Selector == InputsPage.InputButtonControlSelector);
+            Assert.True(I.Find(InputsPage.InputButtonControlSelector).Element.TagName == "input");
+        }
+
+        [Fact]
+        public void ElementPositionTests()
+        {
+            Assert.True(I.Find(InputsPage.InputButtonControlSelector).Element.PosX > 0);
+            Assert.True(I.Find(InputsPage.InputButtonControlSelector).Element.PosY > 0);
         }
 
         [Fact]
@@ -40,32 +51,18 @@ namespace FluentAutomation.Tests.Base
         }
 
         [Fact]
-        public void ElementWidthHeightTests()
-        {
-            Assert.True(I.Find(InputsPage.InputButtonControlSelector).Element.Width > 0);
-            Assert.True(I.Find(InputsPage.InputButtonControlSelector).Element.Height > 0);
-        }
-
-        [Fact]
-        public void ElementPositionTests()
-        {
-            Assert.True(I.Find(InputsPage.InputButtonControlSelector).Element.PosX > 0);
-            Assert.True(I.Find(InputsPage.InputButtonControlSelector).Element.PosY > 0);
-        }
-
-        [Fact]
-        public void ElementOtherParamsTests()
-        {
-            Assert.True(I.Find(InputsPage.InputButtonControlSelector).Element.Selector == InputsPage.InputButtonControlSelector);
-            Assert.True(I.Find(InputsPage.InputButtonControlSelector).Element.TagName == "input");
-        }
-
-        [Fact]
         public void ElementTextValueTests()
         {
             I.Enter("Valid Text").In(InputsPage.TextControlSelector);
             Assert.True(I.Find(InputsPage.TextControlSelector).Element.Text == "Valid Text");
             Assert.True(I.Find(InputsPage.TextControlSelector).Element.Value == "Valid Text");
+        }
+
+        [Fact]
+        public void ElementWidthHeightTests()
+        {
+            Assert.True(I.Find(InputsPage.InputButtonControlSelector).Element.Width > 0);
+            Assert.True(I.Find(InputsPage.InputButtonControlSelector).Element.Height > 0);
         }
     }
 }

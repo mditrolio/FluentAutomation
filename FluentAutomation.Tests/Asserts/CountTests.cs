@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Xunit;
-
-namespace FluentAutomation.Tests.Asserts
+﻿namespace FluentAutomation.Tests.Asserts
 {
+    using Xunit;
+
     public class CountTests : AssertBaseTest
     {
         public CountTests()
-            : base()
         {
             InputsPage.Go();
         }

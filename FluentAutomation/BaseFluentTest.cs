@@ -1,11 +1,9 @@
-﻿using FluentAutomation.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace FluentAutomation
+﻿namespace FluentAutomation
 {
+    using System;
+
+    using Interfaces;
+
     public class BaseFluentTest : IDisposable
     {
         public ISyntaxProvider SyntaxProvider { get; set; }
@@ -14,14 +12,15 @@ namespace FluentAutomation
         {
             try
             {
-                if (FluentSession.Current == null && this.SyntaxProvider != null)
-                {
-                    this.SyntaxProvider.Dispose();
-                }
+                if (FluentSession.Current == null)
+                    SyntaxProvider?.Dispose();
 
                 if (FluentSettings.Current.MinimizeAllWindowsOnTestStart) Win32Magic.RestoreAllWindows();
             }
-            catch { };
+            // ReSharper disable once EmptyGeneralCatchClause
+            catch
+            {
+            }
         }
     }
 }

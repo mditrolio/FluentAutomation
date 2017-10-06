@@ -1,88 +1,71 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Dynamic;
-using System.Linq;
-using System.Text;
-using FluentAutomation.Exceptions;
-using FluentAutomation.Interfaces;
-
-namespace FluentAutomation
+﻿namespace FluentAutomation
 {
+    using System;
+
+    using Exceptions;
+
+    using Interfaces;
+
     public abstract class PageObject
     {
-        private Uri _uri = null;
+        public Action At { get; set; }
 
-        public Uri Uri
-        {
-            get { return _uri; }
-            set { _uri = value; }
-        }
+        public Uri Uri { get; set; }
 
         public string Url
         {
-            get { return _uri.ToString(); }
-            set {
+            get => Uri.ToString();
+            set
+            {
                 if (value.StartsWith("/"))
-                    _uri = new Uri(value, UriKind.Relative);
+                    Uri = new Uri(value, UriKind.Relative);
                 else
-                    _uri = new Uri(value, UriKind.Absolute);
+                    Uri = new Uri(value, UriKind.Absolute);
             }
         }
-
-        public Action At { get; set; }
     }
 
     public abstract class PageObject<T> : PageObject where T : PageObject
     {
-        private FluentTest TestObject { get; set; }
-
         public PageObject(FluentTest test)
         {
-            this.TestObject = test;
+            TestObject = test;
         }
 
-        public IActionSyntaxProvider I
-        {
-            get { return this.TestObject.I; }
-        }
+        public IActionSyntaxProvider I => TestObject.I;
+
+        private FluentTest TestObject { get; }
 
         public T Go()
         {
-            if (this.Uri == null)
+            if (Uri == null)
                 throw new FluentException("This page cannot be navigated to. Uri or Url is not set.");
 
-            return this.Go(this.Uri);
+            return Go(Uri);
         }
 
-        public T Go(Uri uri)
-        {
-            return this.Go(uri.ToString());
-        }
+        public T Go(Uri uri) => Go(uri.ToString());
 
         public T Go(string url)
         {
             I.Open(url);
-            if (this.At != null)
-            {
+            if (At != null)
                 try
                 {
-                    this.At();
+                    At();
                 }
                 catch (FluentException ex)
                 {
                     throw new FluentException("Unable to verify page navigation succeeded. See InnerException for details.", ex);
                 }
-            }
 
             return this as T;
         }
 
         public TNewPage Switch<TNewPage>() where TNewPage : PageObject
         {
-            var newPage = (TNewPage)Activator.CreateInstance(typeof(TNewPage), new object[] { this.TestObject });
+            var newPage = (TNewPage)Activator.CreateInstance(typeof(TNewPage), TestObject);
             if (newPage.At != null)
-            {
                 try
                 {
                     newPage.At();
@@ -91,7 +74,6 @@ namespace FluentAutomation
                 {
                     throw new FluentException("Unable to verify page navigation succeeded. See InnerException for details.", ex);
                 }
-            }
 
             return newPage;
         }

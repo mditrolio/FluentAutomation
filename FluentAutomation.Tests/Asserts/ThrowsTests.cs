@@ -1,19 +1,11 @@
-﻿using FluentAutomation.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Xunit;
-
-namespace FluentAutomation.Tests.Asserts
+﻿namespace FluentAutomation.Tests.Asserts
 {
+    using Exceptions;
+
+    using Xunit;
+
     public class ThrowsTests : AssertBaseTest
     {
-        private void ThrowException()
-        {
-            throw new FluentException("wat");
-        }
-
         [Fact]
         public void TestThrow()
         {
@@ -24,6 +16,11 @@ namespace FluentAutomation.Tests.Asserts
             Assert.Throws<FluentException>(() => I.Assert.Not.Throws(() => I.Assert.True(() => false)));
 
             Assert.Throws<FluentAssertFailedException>(() => With.WaitOnAllAsserts(false).Then.Assert.Throws(() => I.Assert.True(() => true)));
+        }
+
+        private void ThrowException()
+        {
+            throw new FluentException("wat");
         }
     }
 }

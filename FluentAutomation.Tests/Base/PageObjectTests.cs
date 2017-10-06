@@ -1,13 +1,11 @@
-﻿using FluentAutomation.Exceptions;
-using FluentAutomation.Tests.Pages;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Xunit;
-
-namespace FluentAutomation.Tests.Base
+﻿namespace FluentAutomation.Tests.Base
 {
+    using Exceptions;
+
+    using Pages;
+
+    using Xunit;
+
     public class PageObjectTests : BaseTest
     {
         [Fact]

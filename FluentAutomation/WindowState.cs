@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace FluentAutomation
+﻿namespace FluentAutomation
 {
+    using System;
+
     public class WindowState
     {
         public string Source { get; set; }

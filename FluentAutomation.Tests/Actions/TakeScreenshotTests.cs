@@ -1,20 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-using Xunit;
-using System.Globalization;
-using FluentAutomation.Exceptions;
-
-namespace FluentAutomation.Tests.Actions
+﻿namespace FluentAutomation.Tests.Actions
 {
+    using System;
+    using System.Globalization;
+    using System.IO;
+
+    using Exceptions;
+
+    using Xunit;
+
     public class TakeScreenshotTests : BaseTest
     {
-        private string tempPath = null;
+        private readonly string tempPath;
 
         public TakeScreenshotTests()
-            : base()
         {
             tempPath = Path.GetTempPath();
             Config.ScreenshotPath(tempPath);
@@ -22,22 +20,6 @@ namespace FluentAutomation.Tests.Actions
             TextPage.Go();
         }
 
-        [Fact]
-        public void TakeScreenshot()
-        {
-            var screenshotName = string.Format(CultureInfo.CurrentCulture, "TakeScreenshot_{0}", DateTimeOffset.Now.Date.ToFileTime());
-            var filepath = this.tempPath + screenshotName + ".png";
-
-            I.Assert.False(() => File.Exists(filepath));
-
-            I.TakeScreenshot(screenshotName)
-             .Assert
-                .True(() => File.Exists(filepath))
-                .True(() => new FileInfo(filepath).Length > 0);
-
-            File.Delete(filepath);
-        }
-        
         [Fact]
         public void ScreenshotOnFailedAction()
         {
@@ -47,14 +29,14 @@ namespace FluentAutomation.Tests.Actions
             Assert.Throws<FluentException>(() => I.Click("#nope"));
 
             var screenshotName = string.Format(CultureInfo.CurrentCulture, "ActionFailed_{0}", DateTimeOffset.Now.Date.ToFileTime());
-            var filepath = this.tempPath + screenshotName + ".png";
+            var filepath = tempPath + screenshotName + ".png";
             I.Assert
              .True(() => File.Exists(filepath))
              .True(() => new FileInfo(filepath).Length > 0);
 
             File.Delete(filepath);
 
-            Config.ScreenshotOnFailedAction(c);            
+            Config.ScreenshotOnFailedAction(c);
         }
 
         [Fact]
@@ -66,7 +48,7 @@ namespace FluentAutomation.Tests.Actions
             Assert.Throws<FluentException>(() => I.Assert.True(() => false));
 
             var screenshotName = string.Format(CultureInfo.CurrentCulture, "AssertFailed_{0}", DateTimeOffset.Now.Date.ToFileTime());
-            var filepath = this.tempPath + screenshotName + ".png";
+            var filepath = tempPath + screenshotName + ".png";
             I.Assert
              .True(() => File.Exists(filepath))
              .True(() => new FileInfo(filepath).Length > 0);
@@ -74,6 +56,22 @@ namespace FluentAutomation.Tests.Actions
             File.Delete(filepath);
 
             Config.ScreenshotOnFailedAssert(c);
+        }
+
+        [Fact]
+        public void TakeScreenshot()
+        {
+            var screenshotName = string.Format(CultureInfo.CurrentCulture, "TakeScreenshot_{0}", DateTimeOffset.Now.Date.ToFileTime());
+            var filepath = tempPath + screenshotName + ".png";
+
+            I.Assert.False(() => File.Exists(filepath));
+
+            I.TakeScreenshot(screenshotName)
+             .Assert
+             .True(() => File.Exists(filepath))
+             .True(() => new FileInfo(filepath).Length > 0);
+
+            File.Delete(filepath);
         }
 
         /*

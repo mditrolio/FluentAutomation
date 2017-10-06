@@ -1,16 +1,14 @@
-﻿using FluentAutomation.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Xunit;
-
-namespace FluentAutomation.Tests.Asserts
+﻿namespace FluentAutomation.Tests.Asserts
 {
+    using System;
+
+    using Exceptions;
+
+    using Xunit;
+
     public class CssTests : AssertBaseTest
     {
         public CssTests()
-            : base()
         {
             InputsPage.Go();
         }

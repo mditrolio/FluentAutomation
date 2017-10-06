@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Xunit;
-
-namespace FluentAutomation.Tests.Base
+﻿namespace FluentAutomation.Tests.Base
 {
+    using Xunit;
+
     public class ConfigTests : BaseTest
     {
         [Fact]
