@@ -6,7 +6,7 @@
     <Description>Fluent Automation is a simplified DSL for web application automation testing. Original by Brandon Stirnaman.</Description>
     <Authors>Brandon Stirnaman, Matt DiTrolio</Authors>
     <Company>Matt DiTrolio</Company>
-    <Version>4.0.0</Version>
+    <Version>4.0.0-internal-1</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageProjectUrl>https://github.com/mditrolio/FluentAutomation</PackageProjectUrl>
     <RepositoryUrl>https://github.com/mditrolio/FluentAutomation</RepositoryUrl>
