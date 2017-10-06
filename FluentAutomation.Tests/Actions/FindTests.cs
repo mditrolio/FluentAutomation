@@ -1,18 +1,22 @@
-﻿using FluentAutomation.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Xunit;
-
-namespace FluentAutomation.Tests.Actions
+﻿namespace FluentAutomation.Tests.Actions
 {
+    using Exceptions;
+
+    using Xunit;
+
     public class FindTests : BaseTest
     {
         public FindTests()
-            : base()
         {
             InputsPage.Go();
+        }
+
+        [Fact]
+        public void AttemptToFindFakeElement()
+        {
+            var exception = Assert.Throws<FluentElementNotFoundException>(() => I.Find("#fake-control").Element.ToString()); // accessing Element executes the Find
+            Assert.True(exception.Message.Contains("Unable to find"));
+            Assert.Throws<FluentElementNotFoundException>(() => I.FindMultiple("doesntexist").Element);
         }
 
         [Fact]
@@ -33,14 +37,6 @@ namespace FluentAutomation.Tests.Actions
             Assert.True(proxy.Elements.Count > 1);
             Assert.False(proxy.Element.IsText);
             Assert.True(proxy.Element.Text == proxy.Element.Value);
-        }
-
-        [Fact]
-        public void AttemptToFindFakeElement()
-        {
-            var exception = Assert.Throws<FluentElementNotFoundException>(() => I.Find("#fake-control").Element.ToString()); // accessing Element executes the Find
-            Assert.True(exception.Message.Contains("Unable to find"));
-            Assert.Throws<FluentElementNotFoundException>(() => I.FindMultiple("doesntexist").Element);
         }
     }
 }

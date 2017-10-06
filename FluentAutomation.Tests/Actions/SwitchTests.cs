@@ -1,12 +1,9 @@
-﻿using FluentAutomation.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Xunit;
-
-namespace FluentAutomation.Tests.Actions
+﻿namespace FluentAutomation.Tests.Actions
 {
+    using Exceptions;
+
+    using Xunit;
+
     public class SwitchTests : BaseTest
     {
         public SwitchTests()

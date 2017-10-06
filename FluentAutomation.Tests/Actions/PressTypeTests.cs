@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Xunit;
-
-namespace FluentAutomation.Tests.Actions
+﻿namespace FluentAutomation.Tests.Actions
 {
+    using Xunit;
+
     public class PressTypeTests : BaseTest
     {
         public PressTypeTests()
-            : base()
         {
             InputsPage.Go();
         }
@@ -22,6 +17,5 @@ namespace FluentAutomation.Tests.Actions
              .Type("wat")
              .Assert.Text("wat").In(InputsPage.TextareaControlSelector);
         }
-
     }
 }

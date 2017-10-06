@@ -1,12 +1,10 @@
-﻿using OpenQA.Selenium;
-using OpenQA.Selenium.Remote;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace FluentAutomation.Wrappers
+﻿namespace FluentAutomation.Wrappers
 {
+    using System;
+
+    using OpenQA.Selenium;
+    using OpenQA.Selenium.Remote;
+
     public class EnhancedRemoteWebDriver : RemoteWebDriver, ITakesScreenshot
     {
         public EnhancedRemoteWebDriver(ICapabilities desiredCapabilities)
@@ -29,9 +27,9 @@ namespace FluentAutomation.Wrappers
         {
         }
 
-        public Screenshot GetScreenshot()
+        public new Screenshot GetScreenshot()
         {
-            Response response = this.Execute(DriverCommand.Screenshot, null);
+            Response response = Execute(DriverCommand.Screenshot, null);
             string responseContent = response.Value.ToString();
 
             return new Screenshot(responseContent);

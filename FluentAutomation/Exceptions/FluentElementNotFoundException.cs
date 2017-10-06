@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-
-namespace FluentAutomation.Exceptions
+﻿namespace FluentAutomation.Exceptions
 {
+    using System.Runtime.Serialization;
+
     public class FluentElementNotFoundException : FluentException
     {
         public FluentElementNotFoundException(SerializationInfo info, StreamingContext context)

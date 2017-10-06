@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FluentAutomation.Exceptions
+﻿namespace FluentAutomation.Exceptions
 {
-    public class FluentException : System.Exception, ISerializable
+    using System;
+    using System.Linq;
+    using System.Linq.Expressions;
+    using System.Runtime.Serialization;
+    using System.Text;
+
+    public class FluentException : Exception, ISerializable
     {
         public FluentException(SerializationInfo info, StreamingContext context)
             : base(info, context)
@@ -31,7 +29,7 @@ namespace FluentAutomation.Exceptions
         {
             get
             {
-                var stackTraceLines = base.StackTrace.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).Where(s => !s.TrimStart(' ').StartsWith("at " + this.GetType().Namespace));
+                var stackTraceLines = base.StackTrace.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).Where(s => !s.TrimStart(' ').StartsWith("at " + GetType().Namespace));
                 return string.Join(Environment.NewLine, stackTraceLines);
             }
         }
@@ -39,7 +37,7 @@ namespace FluentAutomation.Exceptions
         public string ScreenshotPath { get; set; }
 
         /// <remarks>
-        /// Credit to MvcContrib.TestHelper.AssertionException for PreserveStackTrace
+        ///     Credit to MvcContrib.TestHelper.AssertionException for PreserveStackTrace
         /// </remarks>
         private static void PreserveStackTrace(Exception e)
         {
@@ -52,7 +50,7 @@ namespace FluentAutomation.Exceptions
             mgr.DoFixups();
         }
     }
-    
+
     public static class ExceptionExtensions
     {
         public static string ToExpressionString(this LambdaExpression expression)

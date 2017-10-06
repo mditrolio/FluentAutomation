@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Xunit;
-
-namespace FluentAutomation.Tests.Base
+﻿namespace FluentAutomation.Tests.Base
 {
+    using System;
+
+    using Xunit;
+
     public class WithTests : BaseTest
     {
-        public WithTests()
-            : base()
-        {
-        }
-
         [Fact]
         public void WithTimeouts()
         {

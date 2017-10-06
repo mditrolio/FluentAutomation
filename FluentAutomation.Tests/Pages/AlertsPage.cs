@@ -1,17 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace FluentAutomation.Tests.Pages
+﻿namespace FluentAutomation.Tests.Pages
 {
     public class AlertsPage : PageObject<AlertsPage>
     {
-        public AlertsPage(FluentTest test)
-            : base(test)
-        {
-            this.Url = "/Alerts";
-        }
+        public string ResultSelector = "#result";
 
         public string TriggerAlertSelector = "#trigger-alert";
 
@@ -19,6 +10,10 @@ namespace FluentAutomation.Tests.Pages
 
         public string TriggerPromptSelector = "#trigger-prompt";
 
-        public string ResultSelector = "#result";
+        public AlertsPage(FluentTest test)
+            : base(test)
+        {
+            Url = "/Alerts";
+        }
     }
 }

@@ -1,103 +1,102 @@
-﻿using FluentAutomation.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace FluentAutomation
+﻿namespace FluentAutomation
 {
+    using System;
+
+    using Interfaces;
+
+    using TinyIoC;
+
     public class FluentSession : IDisposable
     {
-        internal static FluentSession Current { get; set; }
+        internal bool HasBootstrappedTypes;
+
+        internal TinyIoCContainer.RegisterOptions SyntaxProviderRegisterOptions;
 
         public FluentSession()
         {
-            if (FluentSession.Current != null)
+            if (Current != null)
             {
-                this.Container = FluentSession.Current.Container;
-                this.SyntaxProviderRegisterOptions = FluentSession.Current.SyntaxProviderRegisterOptions;
-                this.HasBootstrappedTypes = FluentSession.Current.HasBootstrappedTypes;
+                Container = Current.Container;
+                SyntaxProviderRegisterOptions = Current.SyntaxProviderRegisterOptions;
+                HasBootstrappedTypes = Current.HasBootstrappedTypes;
             }
             else
             {
-                this.Container = new TinyIoC.TinyIoCContainer();
+                Container = new TinyIoCContainer();
             }
 
             if (FluentSettings.Current.MinimizeAllWindowsOnTestStart) Win32Magic.MinimizeAllWindows();
         }
 
-        internal TinyIoC.TinyIoCContainer.RegisterOptions SyntaxProviderRegisterOptions = null;
+        public TinyIoCContainer Container { get; }
+        internal static FluentSession Current { get; set; }
 
-        internal bool HasBootstrappedTypes = false;
-
-        public TinyIoC.TinyIoCContainer Container { get; private set; }
-
-        public void RegisterSyntaxProvider<T>() where T : ISyntaxProvider
+        public static void DisableStickySession()
         {
-            if (this.SyntaxProviderRegisterOptions == null)
-                this.SyntaxProviderRegisterOptions = this.Container.Register(typeof(ISyntaxProvider), typeof(T));
-        }
-
-        public ISyntaxProvider GetSyntaxProvider()
-        {
-            return this.Container.Resolve<ISyntaxProvider>();
-        }
-
-        public void BootstrapTypeRegistration(Action<TinyIoC.TinyIoCContainer> containerAction)
-        {
-            if (FluentSession.Current == null)
-            {
-                containerAction(this.Container);
+            if (Current == null)
                 return;
-            }
 
-            if (FluentSession.Current.HasBootstrappedTypes == false)
-            {
-                containerAction(this.Container);
-            }
-
-            FluentSession.Current.HasBootstrappedTypes = true;
+            Current.SyntaxProviderRegisterOptions.AsMultiInstance();
+            Current = null;
+            AppDomain.CurrentDomain.DomainUnload -= CurrentDomain_DomainUnload;
         }
 
         public static void EnableStickySession()
         {
-            FluentSession.Current = new FluentSession();
-            if (FluentSession.Current.SyntaxProviderRegisterOptions == null)
-                FluentSession.Current.RegisterSyntaxProvider<ActionSyntaxProvider>();
+            Current = new FluentSession();
+            if (Current.SyntaxProviderRegisterOptions == null)
+                Current.RegisterSyntaxProvider<ActionSyntaxProvider>();
 
-            if (FluentSession.Current.HasBootstrappedTypes == false)
+            if (Current.HasBootstrappedTypes == false)
             {
-                FluentSession.Current.SyntaxProviderRegisterOptions.AsSingleton();
+                Current.SyntaxProviderRegisterOptions.AsSingleton();
                 AppDomain.CurrentDomain.DomainUnload += CurrentDomain_DomainUnload;
             }
         }
 
-        static void CurrentDomain_DomainUnload(object sender, EventArgs e)
-        {
-            if (FluentSession.Current != null)
-                FluentSession.Current.Dispose();
-        }
-
-        public static void DisableStickySession()
-        {
-            FluentSession.Current.SyntaxProviderRegisterOptions.AsMultiInstance();
-            FluentSession.Current = null;
-            AppDomain.CurrentDomain.DomainUnload -= CurrentDomain_DomainUnload;
-        }
-
         public static void SetStickySession(FluentSession session)
         {
-            FluentSession.Current = session;
-            FluentSession.Current.SyntaxProviderRegisterOptions.AsSingleton();
+            Current = session;
+            Current.SyntaxProviderRegisterOptions.AsSingleton();
+        }
+
+        public void BootstrapTypeRegistration(Action<TinyIoCContainer> containerAction)
+        {
+            if (Current == null)
+            {
+                containerAction(Container);
+                return;
+            }
+
+            if (Current.HasBootstrappedTypes == false)
+                containerAction(Container);
+
+            Current.HasBootstrappedTypes = true;
         }
 
         public void Dispose()
         {
             try
             {
-                this.GetSyntaxProvider().Dispose();
+                GetSyntaxProvider().Dispose();
             }
-            catch (Exception) { }
+            catch (Exception)
+            {
+            }
+        }
+
+        public ISyntaxProvider GetSyntaxProvider() => Container.Resolve<ISyntaxProvider>();
+
+        public void RegisterSyntaxProvider<T>() where T : ISyntaxProvider
+        {
+            if (SyntaxProviderRegisterOptions == null)
+                SyntaxProviderRegisterOptions = Container.Register(typeof(ISyntaxProvider), typeof(T));
+        }
+
+        private static void CurrentDomain_DomainUnload(object sender, EventArgs e)
+        {
+            if (Current != null)
+                Current.Dispose();
         }
     }
 }

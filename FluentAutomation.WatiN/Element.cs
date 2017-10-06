@@ -28,6 +28,8 @@ namespace FluentAutomation
 
         public WatiNCore.Element AutomationElement { get; set; }
 
+        public By FindBy { get; }
+
         public string TagName
         {
             get
@@ -52,7 +54,7 @@ namespace FluentAutomation
 
         public string Value
         {
-            get 
+            get
             {
                 if (this.TagName == "input")
                 {
@@ -83,7 +85,7 @@ namespace FluentAutomation
             {
                 return this.selector;
             }
-        } 
+        }
 
         public IEnumerable<string> SelectedOptionValues
         {
@@ -121,7 +123,7 @@ namespace FluentAutomation
         {
             get
             {
-                bool isText = false;    
+                bool isText = false;
                 switch (this.TagName.ToLower())
                 {
                     case "input":

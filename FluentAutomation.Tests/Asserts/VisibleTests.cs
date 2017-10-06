@@ -1,16 +1,12 @@
-﻿using FluentAutomation.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Xunit;
-
-namespace FluentAutomation.Tests.Asserts
+﻿namespace FluentAutomation.Tests.Asserts
 {
+    using Exceptions;
+
+    using Xunit;
+
     public class VisibleTests : AssertBaseTest
     {
         public VisibleTests()
-            : base()
         {
             InputsPage.Go();
         }
