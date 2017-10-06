@@ -62,7 +62,7 @@
         /// <summary>Click the element matching <paramref name="selector" />.</summary>
         /// <param name="selector">The selector.</param>
         /// <param name="findMethod">The find method.</param>
-        IActionSyntaxProvider Click(string selector, By findMethod);
+        IActionSyntaxProvider Click(string selector, FindBy findMethod);
 
         /// <summary>Click a specified coordinate, starting from the position of the element matching <paramref name="selector" />.</summary>
         /// <param name="selector">The selector.</param>
@@ -75,7 +75,7 @@
         /// <param name="x">X-coordinate offset.</param>
         /// <param name="y">Y-coordinate offset.</param>
         /// <param name="findMethod">The find method.</param>
-        IActionSyntaxProvider Click(string selector, int x, int y, By findMethod);
+        IActionSyntaxProvider Click(string selector, int x, int y, FindBy findMethod);
 
         /// <summary>DoubleClick a specified element.</summary>
         /// <param name="element"><see cref="IElement" /> factory function.</param>
@@ -99,7 +99,7 @@
         /// <summary>DoubleClick the element matching <paramref name="selector" />.</summary>
         /// <param name="selector">The selector.</param>
         /// <param name="findMethod">The find method.</param>
-        IActionSyntaxProvider DoubleClick(string selector, By findMethod);
+        IActionSyntaxProvider DoubleClick(string selector, FindBy findMethod);
 
         /// <summary>
         ///     DoubleClick a specified coordinate, starting from the position of the element matching
@@ -118,7 +118,7 @@
         /// <param name="x">X-coordinate offset.</param>
         /// <param name="y">Y-coordinate offset.</param>
         /// <param name="findMethod">The find method.</param>
-        IActionSyntaxProvider DoubleClick(string selector, int x, int y, By findMethod);
+        IActionSyntaxProvider DoubleClick(string selector, int x, int y, FindBy findMethod);
 
         /// <summary>Begin a Drag/Drop operation starting with the specified element.</summary>
         /// <param name="element"><see cref="IElement" /> factory function.</param>
@@ -135,7 +135,7 @@
         /// <param name="offsetX">The offset x.</param>
         /// <param name="offsetY">The offset y.</param>
         /// <param name="findMethod">The find method.</param>
-        ActionSyntaxProvider.DragDropSyntaxProvider Drag(string selector, int offsetX, int offsetY, By findMethod);
+        ActionSyntaxProvider.DragDropSyntaxProvider Drag(string selector, int offsetX, int offsetY, FindBy findMethod);
 
         /// <summary>Begin a Drag/Drop operation starting with the specified element and an offset.</summary>
         /// <param name="element"><see cref="IElement" /> factory function.</param>
@@ -155,7 +155,7 @@
         /// <summary>Begin a Drag/Drop operation starting with the element matching <paramref name="selector" />.</summary>
         /// <param name="selector">The selector.</param>
         /// <param name="findMethod">The find method.</param>
-        ActionSyntaxProvider.DragDropSyntaxProvider Drag(string selector, By findMethod);
+        ActionSyntaxProvider.DragDropSyntaxProvider Drag(string selector, FindBy findMethod);
 
         /// <summary>
         ///     Enter a number or other object value into a valid input or textarea. Syntactical candy to avoid having to call
@@ -175,7 +175,7 @@
         /// <summary>Find an element matching <paramref name="selector" />.</summary>
         /// <param name="selector">The DOM selector.</param>
         /// <param name="findMethod">The find method.</param>
-        ElementProxy Find(string selector, By findMethod);
+        ElementProxy Find(string selector, FindBy findMethod);
 
         /// <summary>Find a set of elements matching <paramref name="selector" />.</summary>
         /// <param name="selector">The selector.</param>
@@ -184,7 +184,7 @@
         /// <summary>Find a set of elements matching <paramref name="selector" />.</summary>
         /// <param name="selector">The selector.</param>
         /// <param name="findMethod">The find method.</param>
-        ElementProxy FindMultiple(string selector, By findMethod);
+        ElementProxy FindMultiple(string selector, FindBy findMethod);
 
         /// <summary>Sets the focus to a specific element.</summary>
         /// <param name="element">IElement factory function.</param>
@@ -197,7 +197,7 @@
         /// <summary>Sets the focus to element matching <paramref name="selector" />.</summary>
         /// <param name="selector">The selector.</param>
         /// <param name="findMethod">The find method.</param>
-        IActionSyntaxProvider Focus(string selector, By findMethod);
+        IActionSyntaxProvider Focus(string selector, FindBy findMethod);
 
         /// <summary>Causes the mouse to hover over a specified element.</summary>
         /// <param name="element">IElement factory function.</param>
@@ -224,7 +224,7 @@
         /// <summary>Causes the mouse to hover over element matching <paramref name="selector" />.</summary>
         /// <param name="selector">The selector.</param>
         /// <param name="findMethod">The find method.</param>
-        IActionSyntaxProvider Hover(string selector, By findMethod);
+        IActionSyntaxProvider Hover(string selector, FindBy findMethod);
 
         /// <summary>
         ///     Causes the mouse to hover over a specific coordinate, starting from the position of the element matching
@@ -243,7 +243,7 @@
         /// <param name="x">X-coordinate offset.</param>
         /// <param name="y">Y-coordinate offset.</param>
         /// <param name="findMethod">The find method.</param>
-        IActionSyntaxProvider Hover(string selector, int x, int y, By findMethod);
+        IActionSyntaxProvider Hover(string selector, int x, int y, FindBy findMethod);
 
         /// <summary>Open a web browser and navigate to specified URL</summary>
         /// <param name="url">Fully-qualified URL. Example: <c>http://google.com/</c></param>
@@ -273,7 +273,7 @@
         /// <summary>RightClick the element matching <paramref name="selector" />.</summary>
         /// <param name="selector">The selector.</param>
         /// <param name="findMethod">The find method.</param>
-        IActionSyntaxProvider RightClick(string selector, By findMethod);
+        IActionSyntaxProvider RightClick(string selector, FindBy findMethod);
 
         /// <summary>
         ///     RightClick a specified coordinate, starting from the position of the element matching
@@ -292,7 +292,7 @@
         /// <param name="x">X-coordinate offset.</param>
         /// <param name="y">Y-coordinate offset.</param>
         /// <param name="findMethod">The find method.</param>
-        IActionSyntaxProvider RightClick(string selector, int x, int y, By findMethod);
+        IActionSyntaxProvider RightClick(string selector, int x, int y, FindBy findMethod);
 
         /// <summary>RightClick a specified coordinate, starting from the position of the provided <paramref name="element" />.</summary>
         /// <param name="element"><see cref="IElement" /> factory function.</param>
@@ -312,7 +312,7 @@
         /// <summary>Scrolls the viewport to the element matching <paramref name="selector" />. Alias for Hover(string).</summary>
         /// <param name="selector">The selector.</param>
         /// <param name="findMethod">The find method.</param>
-        IActionSyntaxProvider Scroll(string selector, By findMethod);
+        IActionSyntaxProvider Scroll(string selector, FindBy findMethod);
 
         /// <summary>Scrolls the viewport to the specified <paramref name="element" />. Alias for Hover(ElementProxy).</summary>
         /// <param name="element">IElement factory function.</param>
@@ -454,7 +454,7 @@
         ///     <c>C:\Users\Public\Pictures\Sample Pictures\Chrysanthemum.jpg</c>
         /// </param>
         /// <param name="findMethod">The find method.</param>
-        IActionSyntaxProvider Upload(string selector, int x, int y, string fileName, By findMethod);
+        IActionSyntaxProvider Upload(string selector, int x, int y, string fileName, FindBy findMethod);
 
         /// <summary>
         ///     Uploads a file via a standard
@@ -495,7 +495,7 @@
         ///     <c>C:\Users\Public\Pictures\Sample Pictures\Chrysanthemum.jpg</c>
         /// </param>
         /// <param name="findMethod">The find method.</param>
-        IActionSyntaxProvider Upload(string selector, string fileName, By findMethod);
+        IActionSyntaxProvider Upload(string selector, string fileName, FindBy findMethod);
 
         /// <summary>Waits the duration of the WaitTimeout as specified in settings.</summary>
         IActionSyntaxProvider Wait();

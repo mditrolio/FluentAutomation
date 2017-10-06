@@ -1,121 +1,53 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FluentAutomation.Interfaces;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Support.UI;
-
-namespace FluentAutomation
+﻿namespace FluentAutomation
 {
+    using System.Collections.Generic;
+    using System.Linq;
+
+    using Interfaces;
+
+    using OpenQA.Selenium;
+    using OpenQA.Selenium.Support.UI;
+
     public class Element : IElement
     {
-        private string selector = null;
+        private IElementAttributeSelector attributes;
 
-        public Element(IWebElement webElement, string selector, By findBy)
+        public Element(IWebElement webElement, string selector, FindBy findBy)
         {
-            this.WebElement = webElement;
-            this.selector = selector;
-            this.FindBy = findBy;
-            this.tagName = this.WebElement.TagName;
+            WebElement = webElement;
+            Selector = selector;
+            FindBy = findBy;
+            TagName = WebElement.TagName;
         }
 
-        private string tagName = null;
+        public IElementAttributeSelector Attributes => attributes ?? (attributes = new ElementAttributeSelector(WebElement));
 
-        public By FindBy { get; }
+        public FindBy FindBy { get; }
 
-        public string TagName
-        {
-            get
-            {
-                return this.tagName;
-            }
-        }
+        public int Height => WebElement.Size.Height;
 
-        public string Value
+        public bool IsMultipleSelect
         {
             get
             {
-                if (this.TagName == "input" || this.TagName == "textarea")
-                {
-                    return this.Attributes.Get("value");
-                }
-                else if (this.IsSelect)
-                {
-                    return string.Join(",", this.SelectedOptionValues);
-                }
-                else
-                {
-                    return this.Text;
-                }
+                if (!IsSelect)
+                    return false;
+                SelectElement selectElement = new SelectElement(WebElement);
+                return selectElement.IsMultiple;
             }
         }
 
-        public string Text
-        {
-            get
-            {
-                if (this.TagName == "input" || this.TagName == "textarea")
-                {
-                    return this.Value;
-                }
-                else
-                {
-                    return this.WebElement.Text;
-                }
-            }
-        }
-
-        public string Selector
-        {
-            get
-            {
-                return this.selector;
-            }
-        }
-
-        public IEnumerable<string> SelectedOptionValues
-        {
-            get
-            {
-                if (this.IsSelect)
-                {
-                    SelectElement selectElement = new SelectElement(this.WebElement);
-                    return selectElement.AllSelectedOptions.Select(x => x.GetAttribute("value"));
-                }
-                else
-                {
-                    return null;
-                }
-            }
-        }
-
-        public IEnumerable<string> SelectedOptionTextCollection
-        {
-            get
-            {
-                if (this.IsSelect)
-                {
-                    SelectElement selectElement = new SelectElement(this.WebElement);
-                    return selectElement.AllSelectedOptions.Select(x => x.Text);
-                }
-                else
-                {
-                    return null;
-                }
-            }
-        }
+        public bool IsSelect => WebElement.TagName.ToLower() == "select";
 
         public bool IsText
         {
             get
             {
                 bool isText = false;
-                switch (this.TagName)
+                switch (TagName)
                 {
                     case "input":
-                        switch (this.Attributes.Get("type").ToLower())
+                        switch (Attributes.Get("type").ToLower())
                         {
                             case "text":
                             case "email":
@@ -139,82 +71,56 @@ namespace FluentAutomation
             }
         }
 
-        public bool IsSelect
+        public int PosX => WebElement.Location.X;
+
+        public int PosY => WebElement.Location.Y;
+
+        public IEnumerable<string> SelectedOptionTextCollection
         {
             get
             {
-                return this.WebElement.TagName.ToLower() == "select";
+                if (!IsSelect)
+                    return null;
+                SelectElement selectElement = new SelectElement(WebElement);
+                return selectElement.AllSelectedOptions.Select(x => x.Text);
             }
         }
 
-        public bool IsMultipleSelect
+        public IEnumerable<string> SelectedOptionValues
         {
             get
             {
-                if (this.IsSelect)
-                {
-                    SelectElement selectElement = new SelectElement(this.WebElement);
-                    return selectElement.IsMultiple;
-                }
-                else
-                {
-                    return false;
-                }
+                if (!IsSelect)
+                    return null;
+                SelectElement selectElement = new SelectElement(WebElement);
+                return selectElement.AllSelectedOptions.Select(x => x.GetAttribute("value"));
             }
         }
 
-        private IElementAttributeSelector attributes = null;
-        public IElementAttributeSelector Attributes
+        public string Selector { get; }
+
+        public string TagName { get; }
+
+        public string Text => TagName == "input" || TagName == "textarea" ? Value : WebElement.Text;
+
+        public string Value
         {
             get
             {
-                if (attributes == null)
-                {
-                    attributes = new ElementAttributeSelector(this.WebElement);
-                }
-
-                return attributes;
+                if (TagName == "input" || TagName == "textarea")
+                    return Attributes.Get("value");
+                return IsSelect ? string.Join(",", SelectedOptionValues) : Text;
             }
         }
+
+        public int Width => WebElement.Size.Width;
 
         public IWebElement WebElement { get; set; }
-
-        public int Height
-        {
-            get
-            {
-                return this.WebElement.Size.Height;
-            }
-        }
-
-        public int Width
-        {
-            get
-            {
-                return this.WebElement.Size.Width;
-            }
-        }
-
-        public int PosX
-        {
-            get
-            {
-                return this.WebElement.Location.X;
-            }
-        }
-
-        public int PosY
-        {
-            get
-            {
-                return this.WebElement.Location.Y;
-            }
-        }
     }
 
     public class ElementAttributeSelector : IElementAttributeSelector
     {
-        private readonly IWebElement webElement = null;
+        private readonly IWebElement webElement;
 
         public ElementAttributeSelector(IWebElement webElement)
         {

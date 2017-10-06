@@ -1,21 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Xunit;
-
-namespace FluentAutomation.Tests.Actions
+﻿namespace FluentAutomation.Tests.Actions
 {
+    using Xunit;
+
     public class HoverTests : BaseTest
     {
         public HoverTests()
-            : base()
         {
             InputsPage.Go();
         }
 
         /// <summary>
-        /// Hover over a simple block element, in this case an H1
+        ///     Hover over a simple block element, in this case an H1
         /// </summary>
         [Fact]
         public void HoverBlockElement()
@@ -28,13 +23,11 @@ namespace FluentAutomation.Tests.Actions
         }
 
         [Fact]
-        public void HoverLink()
+        public void HoverButton()
         {
-            TextPage.Go();
-
-            I.Assert.Css("color", InputsPage.HoverColor).Not.On(TextPage.Link1Selector);
-            I.Hover(TextPage.Link1Selector)
-             .Assert.Css("color", InputsPage.HoverColor).On(TextPage.Link1Selector);
+            I.Assert.Css("color", InputsPage.HoverColor).Not.On(InputsPage.ButtonControlSelector);
+            I.Hover(InputsPage.ButtonControlSelector)
+             .Assert.Css("color", InputsPage.HoverColor).On(InputsPage.ButtonControlSelector);
         }
 
         [Fact]
@@ -58,15 +51,17 @@ namespace FluentAutomation.Tests.Actions
         }
 
         [Fact]
-        public void HoverButton()
+        public void HoverLink()
         {
-            I.Assert.Css("color", InputsPage.HoverColor).Not.On(InputsPage.ButtonControlSelector);
-            I.Hover(InputsPage.ButtonControlSelector)
-             .Assert.Css("color", InputsPage.HoverColor).On(InputsPage.ButtonControlSelector);
+            TextPage.Go();
+
+            I.Assert.Css("color", InputsPage.HoverColor).Not.On(TextPage.Link1Selector);
+            I.Hover(TextPage.Link1Selector)
+             .Assert.Css("color", InputsPage.HoverColor).On(TextPage.Link1Selector);
         }
 
         /// <summary>
-        /// Test that Hover actually pulls elements into the viewport
+        ///     Test that Hover actually pulls elements into the viewport
         /// </summary>
         [Fact]
         public void HoverScroll()
@@ -102,7 +97,7 @@ namespace FluentAutomation.Tests.Actions
         }
 
         /// <summary>
-        /// Test that Scroll is equivalent to Hover
+        ///     Test that Scroll is equivalent to Hover
         /// </summary>
         [Fact]
         public void Scroll()

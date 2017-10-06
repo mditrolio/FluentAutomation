@@ -15,7 +15,7 @@
         /// </summary>
         public ElementProxy()
         {
-            this.Children = new List<Func<ElementProxy>>();
+            Children = new List<Func<ElementProxy>>();
         }
 
         /// <summary>
@@ -25,10 +25,10 @@
         /// <param name="element"></param>
         public ElementProxy(ICommandProvider commandProvider, Func<IElement> element)
         {
-            this.Elements.Add(new Tuple<ICommandProvider, Func<IElement>>(commandProvider, element));
+            Elements.Add(new Tuple<ICommandProvider, Func<IElement>>(commandProvider, element));
         }
 
-        public IElement Element => this.Elements.First().Item2();
+        public IElement Element => Elements.First().Item2();
 
         /// <summary>
         ///     Representation of an element across command providers, wrapped for lazy loading.
@@ -38,18 +38,18 @@
             get
             {
                 // if a FindMultiple result has been passed in, we need to 'elevate' its items first
-                if (this.Children != null)
+                if (Children != null)
                 {
-                    foreach (var proxy in this.Children)
+                    foreach (var proxy in Children)
                     {
                         foreach (var element in proxy().Elements)
-                            this.elements.Add(new Tuple<ICommandProvider, Func<IElement>>(element.Item1, element.Item2));
+                            elements.Add(new Tuple<ICommandProvider, Func<IElement>>(element.Item1, element.Item2));
                     }
 
-                    this.Children = null;
+                    Children = null;
                 }
 
-                return this.elements;
+                return elements;
             }
         }
 

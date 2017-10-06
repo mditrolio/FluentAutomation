@@ -1,19 +1,29 @@
-﻿using FluentAutomation.Exceptions;
-using OpenQA.Selenium;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Xunit;
-
-namespace FluentAutomation.Tests.Actions
+﻿namespace FluentAutomation.Tests.Actions
 {
+    using Exceptions;
+
+    using Xunit;
+
     public class AppendTests : BaseTest
     {
         public AppendTests()
-            : base()
         {
             InputsPage.Go();
+        }
+
+        [Fact]
+        public void AppendTextToInvalidInputUsingSelector()
+        {
+            var exception = Assert.Throws<FluentElementNotFoundException>(() => I.Append("Test String").To("#text-control-fake"));
+            Assert.True(exception.Message.Contains("Unable to find"));
+        }
+
+        [Fact]
+        public void AppendTextToSelect()
+        {
+            // Append cannot be used on non-text elements
+            var exception = Assert.Throws<FluentException>(() => I.Append("QA").To(InputsPage.SelectControlSelector));
+            Assert.True(exception.Message.Contains("only supported"));
         }
 
         [Fact]
@@ -40,21 +50,6 @@ namespace FluentAutomation.Tests.Actions
 
             I.Append("Other Test String").To(InputsPage.TextareaControlSelector)
              .Assert.Text("BaseStringOther Test String").In(InputsPage.TextareaControlSelector);
-        }
-
-        [Fact]
-        public void AppendTextToInvalidInputUsingSelector()
-        {
-            var exception = Assert.Throws<FluentElementNotFoundException>(() => I.Append("Test String").To("#text-control-fake"));
-            Assert.True(exception.Message.Contains("Unable to find"));
-        }
-
-        [Fact]
-        public void AppendTextToSelect()
-        {
-            // Append cannot be used on non-text elements
-            var exception = Assert.Throws<FluentException>(() => I.Append("QA").To(InputsPage.SelectControlSelector));
-            Assert.True(exception.Message.Contains("only supported"));
         }
     }
 }

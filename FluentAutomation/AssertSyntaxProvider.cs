@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using FluentAutomation.Interfaces;
-using FluentAutomation.Exceptions;
-
-namespace FluentAutomation
+﻿namespace FluentAutomation
 {
+    using System;
+    using System.Linq.Expressions;
+
+    using Exceptions;
+
+    using Interfaces;
+
     /// <summary>The assert syntax provider.</summary>
     public class AssertSyntaxProvider : BaseAssertSyntaxProvider
     {
-        /// <summary>Initializes a new instance of the <see cref="AssertSyntaxProvider"/> class.</summary>
+        /// <summary>Initializes a new instance of the <see cref="AssertSyntaxProvider" /> class.</summary>
         /// <param name="commandProvider">The command provider.</param>
         /// <param name="assertProvider">The assert provider.</param>
         public AssertSyntaxProvider(ICommandProvider commandProvider, IAssertProvider assertProvider)
@@ -21,386 +20,151 @@ namespace FluentAutomation
 
         /// <summary>Negative assertions</summary>
         /// <value>The not.</value>
-        public NotAssertSyntaxProvider Not
-        {
-            get
-            {
-                return new NotAssertSyntaxProvider(commandProvider, assertProvider, assertSyntaxProvider);
-            }
-        }
+        public NotAssertSyntaxProvider Not => new NotAssertSyntaxProvider(commandProvider, assertProvider, assertSyntaxProvider);
 
-        /// <summary>The not assert syntax provider.</summary>
-        public class NotAssertSyntaxProvider : BaseAssertSyntaxProvider
-        {
-            /// <summary>Initializes a new instance of the <see cref="NotAssertSyntaxProvider"/> class.</summary>
-            /// <param name="commandProvider">The command provider.</param>
-            /// <param name="assertProvider">The assert provider.</param>
-            /// <param name="assertSyntaxProvider">The assert syntax provider.</param>
-            public NotAssertSyntaxProvider(ICommandProvider commandProvider, IAssertProvider assertProvider, AssertSyntaxProvider assertSyntaxProvider)
-                : base(commandProvider, assertProvider, assertSyntaxProvider)
-            {
-            }
-
-            /// <summary>Assert the current web browser's URL not to match <paramref name="expectedUrl" />.</summary>
-            /// <param name="expectedUrl">Fully-qualified URL to use for matching..</param>
-            public AssertSyntaxProvider Url(string expectedUrl)
-            {
-                return this.Url(new Uri(expectedUrl, UriKind.Absolute));
-            }
-
-            /// <summary>Assert the current web browser's URI shouldn't match <paramref name="expectedUri" />.</summary>
-            /// <param name="expectedUri">Absolute URI to use for matching.</param>
-            public AssertSyntaxProvider Url(Uri expectedUri)
-            {
-                this.assertProvider.NotUrl(expectedUri);
-                return this.assertSyntaxProvider;
-            }
-
-            /// <summary>Assert the current web browser's URI provided to the specified <paramref name="uriExpression">URI expression</paramref> will return false;</summary>
-            /// <param name="uriExpression">URI expression to use for matching.</param>
-            public AssertSyntaxProvider Url(Expression<Func<Uri, bool>> uriExpression)
-            {
-                this.assertProvider.NotUrl(uriExpression);
-                return this.assertSyntaxProvider;
-            }
-
-            /// <summary>Assert that an arbitrary <paramref name="matchFunc">matching function</paramref> does not return true.</summary>
-            /// <param name="matchFunc">The match function.</param>
-            public AssertSyntaxProvider True(Expression<Func<bool>> matchFunc)
-            {
-                this.assertProvider.False(matchFunc);
-                return this.assertSyntaxProvider;
-            }
-
-            /// <summary>Assert that an arbitrary <paramref name="matchFunc">matching function</paramref> does not return false.</summary>
-            /// <param name="matchFunc">The match function.</param>
-            public AssertSyntaxProvider False(Expression<Func<bool>> matchFunc)
-            {
-                this.assertProvider.True(matchFunc);
-                return this.assertSyntaxProvider;
-            }
-
-            /// <summary>Assert that an arbitrary <paramref name="matchAction">action</paramref> does not throw an Exception.</summary>
-            /// <param name="matchAction">The match action.</param>
-            public AssertSyntaxProvider Throws(Expression<Action> matchAction)
-            {
-                this.assertProvider.NotThrows(matchAction);
-                return this.assertSyntaxProvider;
-            }
-
-            /// <summary>Assert the element specified does not exist.</summary>
-            /// <param name="selector">Element selector.</param>
-            public AssertSyntaxProvider Exists(string selector) => this.Exists(selector, Defaults.FindMethod);
-
-            /// <summary>Assert the element specified does not exist.</summary>
-            /// <param name="selector">Element selector.</param>
-            /// <param name="findMethod">The find method.</param>
-            public AssertSyntaxProvider Exists(string selector, By findMethod)
-            {
-                this.assertProvider.NotExists(selector, findMethod);
-                return this.assertSyntaxProvider;
-            }
-
-            /// <summary>Assert the element specified does not exist.</summary>
-            /// <param name="element">The element.</param>
-            public AssertSyntaxProvider Exists(ElementProxy element)
-            {
-                this.assertProvider.NotExists(element);
-                return this.assertSyntaxProvider;
-            }
-
-            /// <summary>Assert that the element matching the selector is not visible and cannot be interacted with.</summary>
-            /// <param name="selector">The selector.</param>
-            public AssertSyntaxProvider Visible(string selector) => this.Visible(selector, Defaults.FindMethod);
-
-            /// <summary>Assert that the element matching the selector is not visible and cannot be interacted with.</summary>
-            /// <param name="selector">The selector.</param>
-            /// <param name="findMethod">The find method.</param>
-            public AssertSyntaxProvider Visible(string selector, By findMethod)
-            {
-                this.assertProvider.NotVisible(selector, findMethod);
-                return this.assertSyntaxProvider;
-            }
-
-            /// <summary>Assert that the element is not visible and cannot be interacted with.</summary>
-            /// <param name="element">The element.</param>
-            public AssertSyntaxProvider Visible(ElementProxy element)
-            {
-                this.assertProvider.NotVisible(element);
-                return this.assertSyntaxProvider;
-            }
-        }
-
-        #region Count
-        /// <summary>Assert a specific count.</summary>
-        /// <param name="count">Number of elements found.</param>
-        public AssertCountSyntaxProvider Count(int count)
-        {
-            return new AssertCountSyntaxProvider(this.commandProvider, this.assertProvider, this.assertSyntaxProvider, count);
-        }
-
-        /// <summary>The assert count syntax provider.</summary>
-        public class AssertCountSyntaxProvider : BaseAssertSyntaxProvider
-        {
-            private readonly int count = 0;
-            private readonly bool notMode = false;
-
-            /// <summary>Initializes a new instance of the <see cref="AssertCountSyntaxProvider"/> class.</summary>
-            /// <param name="commandProvider">The command provider.</param>
-            /// <param name="assertProvider">The assert provider.</param>
-            /// <param name="assertSyntaxProvider">The assert syntax provider.</param>
-            /// <param name="count">The count.</param>
-            public AssertCountSyntaxProvider(ICommandProvider commandProvider, IAssertProvider assertProvider, AssertSyntaxProvider assertSyntaxProvider, int count)
-                : this(commandProvider, assertProvider, assertSyntaxProvider, count, false)
-            {
-            }
-
-            /// <summary>Initializes a new instance of the <see cref="AssertCountSyntaxProvider"/> class.</summary>
-            /// <param name="commandProvider">The command provider.</param>
-            /// <param name="assertProvider">The assert provider.</param>
-            /// <param name="assertSyntaxProvider">The assert syntax provider.</param>
-            /// <param name="count">The count.</param>
-            /// <param name="notMode">if set to <see langword="true" /> [not mode].</param>
-            public AssertCountSyntaxProvider(ICommandProvider commandProvider, IAssertProvider assertProvider, AssertSyntaxProvider assertSyntaxProvider, int count, bool notMode)
-                : base(commandProvider, assertProvider, assertSyntaxProvider)
-            {
-                this.count = count;
-                this.notMode = notMode;
-            }
-
-            /// <summary>Assert that the Count does not match - Reverses assertions in this chain.</summary>
-            /// <value>The not.</value>
-            public AssertCountSyntaxProvider Not
-            {
-                get
-                {
-                    return new AssertCountSyntaxProvider(commandProvider, assertProvider, assertSyntaxProvider, count, true);
-                }
-            }
-
-            /// <summary>Elements matching <paramref name="selector" /> to be counted.</summary>
-            /// <param name="selector">The selector.</param>
-            public AssertSyntaxProvider Of(string selector) => this.Of(selector, Defaults.FindMethod);
-
-            /// <summary>Elements matching <paramref name="selector" /> to be counted.</summary>
-            /// <param name="selector">The selector.</param>
-            /// <param name="findMethod">The find method.</param>
-            public AssertSyntaxProvider Of(string selector, By findMethod)
-            {
-                if (this.notMode)
-                    this.assertProvider.NotCount(selector, this.count, findMethod);
-                else
-                    this.assertProvider.Count(selector, this.count, findMethod);
-
-                return this.assertSyntaxProvider;
-            }
-
-            /// <summary>Specified <paramref name="elements" /> to be counted.</summary>
-            /// <param name="elements">IElement collection factory function.</param>
-            public AssertSyntaxProvider Of(ElementProxy elements)
-            {
-                if (this.notMode)
-                    this.assertProvider.NotCount(elements, count);
-                else
-                    this.assertProvider.Count(elements, this.count);
-
-                return this.assertSyntaxProvider;
-            }
-        }
-        #endregion
-
-        #region CSS Class
-        /// <summary>Assert that a matching CSS class is found.</summary>
-        /// <param name="className">CSS class name. Example: .row</param>
-        public AssertClassSyntaxProvider Class(string className)
-        {
-            return new AssertClassSyntaxProvider(this.commandProvider, this.assertProvider, this.assertSyntaxProvider, className);
-        }
-
-        /// <summary>The assert class syntax provider.</summary>
-        public class AssertClassSyntaxProvider : BaseAssertSyntaxProvider
-        {
-            private readonly string className = null;
-            private readonly bool notMode = false;
-
-            /// <summary>Initializes a new instance of the <see cref="AssertClassSyntaxProvider"/> class.</summary>
-            /// <param name="commandProvider">The command provider.</param>
-            /// <param name="assertProvider">The assert provider.</param>
-            /// <param name="assertSyntaxProvider">The assert syntax provider.</param>
-            /// <param name="className">Name of the class.</param>
-            public AssertClassSyntaxProvider(ICommandProvider commandProvider, IAssertProvider assertProvider, AssertSyntaxProvider assertSyntaxProvider, string className)
-                : this(commandProvider, assertProvider, assertSyntaxProvider, className, false)
-            {
-            }
-
-            /// <summary>Initializes a new instance of the <see cref="AssertClassSyntaxProvider"/> class.</summary>
-            /// <param name="commandProvider">The command provider.</param>
-            /// <param name="assertProvider">The assert provider.</param>
-            /// <param name="assertSyntaxProvider">The assert syntax provider.</param>
-            /// <param name="className">Name of the class.</param>
-            /// <param name="notMode">if set to <see langword="true" /> [not mode].</param>
-            public AssertClassSyntaxProvider(ICommandProvider commandProvider, IAssertProvider assertProvider, AssertSyntaxProvider assertSyntaxProvider, string className, bool notMode)
-                : base(commandProvider, assertProvider, assertSyntaxProvider)
-            {
-                this.className = className;
-                this.notMode = notMode;
-            }
-
-            /// <summary>Assert that CSS Class does not match - Reverses assertions in this chain.</summary>
-            /// <value>The not.</value>
-            public AssertClassSyntaxProvider Not
-            {
-                get
-                {
-                    return new AssertClassSyntaxProvider(commandProvider, assertProvider, assertSyntaxProvider, className, true);
-                }
-            }
-
-            /// <summary>Element matching <paramref name="selector" /> that should have matching CSS class.</summary>
-            /// <param name="selector">The selector.</param>
-            public AssertSyntaxProvider On(string selector) => this.On(selector, Defaults.FindMethod);
-
-            /// <summary>Element matching <paramref name="selector" /> that should have matching CSS class.</summary>
-            /// <param name="selector">The selector.</param>
-            /// <param name="findMethod">The find method.</param>
-            public AssertSyntaxProvider On(string selector, By findMethod)
-            {
-                if (this.notMode)
-                    this.assertProvider.NotCssClass(selector, this.className, findMethod);
-                else
-                    this.assertProvider.CssClass(selector, this.className, findMethod);
-
-                return this.assertSyntaxProvider;
-            }
-
-            /// <summary>Specified <paramref name="element" /> that should have matching CSS class.</summary>
-            /// <param name="element">IElement factory function.</param>
-            public AssertSyntaxProvider On(ElementProxy element)
-            {
-                if (this.notMode)
-                    this.assertProvider.NotCssClass(element, this.className);
-                else
-                    this.assertProvider.CssClass(element, this.className);
-
-                return this.assertSyntaxProvider;
-            }
-        }
-        #endregion
-
-        #region CSS Property
-        /// <summary>Assert that a matching CSS property is found.</summary>
-        /// <param name="propertyName">CSS property name. Example: color</param>
-        public AssertCssPropertySyntaxProvider Css(string propertyName)
-        {
-            return this.Css(propertyName, null);
-        }
-
-        /// <summary>Assert that a matching CSS property is found.</summary>
-        /// <param name="propertyName">CSS property name. Example: color</param>
-        /// <param name="propertyValue">CSS property value. Example: red</param>
-        public AssertCssPropertySyntaxProvider Css(string propertyName, string propertyValue)
-        {
-            return new AssertCssPropertySyntaxProvider(this.commandProvider, this.assertProvider, this.assertSyntaxProvider, propertyName, propertyValue);
-        }
-
-        /// <summary>The assert CSS property syntax provider.</summary>
-        public class AssertCssPropertySyntaxProvider : BaseAssertSyntaxProvider
-        {
-            private readonly string propertyName = null;
-            private readonly string propertyValue = null;
-            private readonly bool notMode = false;
-
-            /// <summary>Initializes a new instance of the <see cref="AssertCssPropertySyntaxProvider"/> class.</summary>
-            /// <param name="commandProvider">The command provider.</param>
-            /// <param name="assertProvider">The assert provider.</param>
-            /// <param name="assertSyntaxProvider">The assert syntax provider.</param>
-            /// <param name="propertyName">Name of the property.</param>
-            /// <param name="propertyValue">The property value.</param>
-            public AssertCssPropertySyntaxProvider(ICommandProvider commandProvider, IAssertProvider assertProvider, AssertSyntaxProvider assertSyntaxProvider, string propertyName, string propertyValue)
-                : this(commandProvider, assertProvider, assertSyntaxProvider, propertyName, propertyValue, false)
-            {
-            }
-
-            /// <summary>Initializes a new instance of the <see cref="AssertCssPropertySyntaxProvider"/> class.</summary>
-            /// <param name="commandProvider">The command provider.</param>
-            /// <param name="assertProvider">The assert provider.</param>
-            /// <param name="assertSyntaxProvider">The assert syntax provider.</param>
-            /// <param name="propertyName">Name of the property.</param>
-            /// <param name="propertyValue">The property value.</param>
-            /// <param name="notMode">if set to <see langword="true" /> [not mode].</param>
-            public AssertCssPropertySyntaxProvider(ICommandProvider commandProvider, IAssertProvider assertProvider, AssertSyntaxProvider assertSyntaxProvider, string propertyName, string propertyValue, bool notMode)
-                : base(commandProvider, assertProvider, assertSyntaxProvider)
-            {
-                this.propertyName = propertyName;
-                this.propertyValue = propertyValue;
-                this.notMode = notMode;
-            }
-
-            /// <summary>Assert that CSS Class does not match - Reverses assertions in this chain.</summary>
-            /// <value>The not.</value>
-            public AssertCssPropertySyntaxProvider Not
-            {
-                get
-                {
-                    return new AssertCssPropertySyntaxProvider(commandProvider, assertProvider, assertSyntaxProvider, propertyName, propertyValue, true);
-                }
-            }
-
-            /// <summary>Element matching <paramref name="selector" /> that should have matching CSS class.</summary>
-            /// <param name="selector">The selector.</param>
-            public AssertSyntaxProvider On(string selector) => this.On(selector, Defaults.FindMethod);
-
-            /// <summary>Element matching <paramref name="selector" /> that should have matching CSS class.</summary>
-            /// <param name="selector">The selector.</param>
-            /// <param name="findMethod">The find method.</param>
-            public AssertSyntaxProvider On(string selector, By findMethod)
-            {
-                if (this.notMode)
-                    this.assertProvider.NotCssProperty(selector, this.propertyName, this.propertyValue, findMethod);
-                else
-                    this.assertProvider.CssProperty(selector, this.propertyName, this.propertyValue, findMethod);
-
-                return this.assertSyntaxProvider;
-            }
-
-            /// <summary>Specified <paramref name="element" /> that should have matching CSS class.</summary>
-            /// <param name="element">IElement factory function.</param>
-            public AssertSyntaxProvider On(ElementProxy element)
-            {
-                if (this.notMode)
-                    this.assertProvider.NotCssProperty(element, this.propertyName, this.propertyValue);
-                else
-                    this.assertProvider.CssProperty(element, this.propertyName, this.propertyValue);
-
-                return this.assertSyntaxProvider;
-            }
-        }
-        #endregion
-
-        #region Attribute
         /// <summary>Assert that a matching attribute is found.</summary>
         /// <param name="attributeName">Attribute name. Example: src</param>
-        public AssertAttributeSyntaxProvider Attribute(string attributeName)
-        {
-            return this.Attribute(attributeName, null);
-        }
+        public AssertAttributeSyntaxProvider Attribute(string attributeName) => Attribute(attributeName, null);
 
         /// <summary>Assert that a matching CSS property is found.</summary>
         /// <param name="attributeName">Attribute name. Example: src</param>
         /// <param name="propertyValue">The property value.</param>
-        public AssertAttributeSyntaxProvider Attribute(string attributeName, string propertyValue)
+        public AssertAttributeSyntaxProvider Attribute(string attributeName, string propertyValue) => new AssertAttributeSyntaxProvider(commandProvider, assertProvider, assertSyntaxProvider, attributeName, propertyValue);
+
+        /// <summary>Assert that a matching CSS class is found.</summary>
+        /// <param name="className">CSS class name. Example: .row</param>
+        public AssertClassSyntaxProvider Class(string className) => new AssertClassSyntaxProvider(commandProvider, assertProvider, assertSyntaxProvider, className);
+
+        /// <summary>Assert a specific count.</summary>
+        /// <param name="count">Number of elements found.</param>
+        public AssertCountSyntaxProvider Count(int count) => new AssertCountSyntaxProvider(commandProvider, assertProvider, assertSyntaxProvider, count);
+
+        /// <summary>Assert that a matching CSS property is found.</summary>
+        /// <param name="propertyName">CSS property name. Example: color</param>
+        public AssertCssPropertySyntaxProvider Css(string propertyName) => Css(propertyName, null);
+
+        /// <summary>Assert that a matching CSS property is found.</summary>
+        /// <param name="propertyName">CSS property name. Example: color</param>
+        /// <param name="propertyValue">CSS property value. Example: red</param>
+        public AssertCssPropertySyntaxProvider Css(string propertyName, string propertyValue) => new AssertCssPropertySyntaxProvider(commandProvider, assertProvider, assertSyntaxProvider, propertyName, propertyValue);
+
+        /// <summary>Assert the element specified exists.</summary>
+        /// <param name="selector">Element selector.</param>
+        public AssertSyntaxProvider Exists(string selector) => Exists(selector, Defaults.FindMethod);
+
+        /// <summary>Assert the element specified exists.</summary>
+        /// <param name="selector">Element selector.</param>
+        /// <param name="findMethod">The find method.</param>
+        public AssertSyntaxProvider Exists(string selector, FindBy findMethod)
         {
-            return new AssertAttributeSyntaxProvider(this.commandProvider, this.assertProvider, this.assertSyntaxProvider, attributeName, propertyValue);
+            assertProvider.Exists(selector, findMethod);
+            return assertSyntaxProvider;
+        }
+
+        /// <summary>Assert the element specified exists.</summary>
+        /// <param name="element">Reference to element</param>
+        public AssertSyntaxProvider Exists(ElementProxy element)
+        {
+            assertProvider.Exists(element);
+            return assertSyntaxProvider;
+        }
+
+        /// <summary>Assert that an arbitrary <paramref name="matchFunc">matching function</paramref> returns false.</summary>
+        /// <param name="matchFunc">The match function.</param>
+        public AssertSyntaxProvider False(Expression<Func<bool>> matchFunc)
+        {
+            assertProvider.False(matchFunc);
+            return assertSyntaxProvider;
+        }
+
+        /// <summary>Assert that Text matches specified <paramref name="text" />.</summary>
+        /// <param name="text">Text that must be exactly matched.</param>
+        public AssertTextSyntaxProvider Text(string text) => new AssertTextSyntaxProvider(commandProvider, assertProvider, assertSyntaxProvider, text);
+
+        /// <summary>Assert that Text provided to specified <paramref name="matchFunc">match function</paramref> returns true.</summary>
+        /// <param name="matchFunc">Function to evaluate if Text matches. Example: (text) =&gt; text.Contains("Hello")</param>
+        public AssertTextSyntaxProvider Text(Expression<Func<string, bool>> matchFunc) => new AssertTextSyntaxProvider(commandProvider, assertProvider, assertSyntaxProvider, matchFunc);
+
+        /// <summary>Assert that an arbitrary <paramref name="matchAction">action</paramref> throws an Exception.</summary>
+        /// <param name="matchAction">The match action.</param>
+        public AssertSyntaxProvider Throws(Expression<Action> matchAction)
+        {
+            assertProvider.Throws(matchAction);
+            return assertSyntaxProvider;
+        }
+
+        /// <summary>Assert that an arbitrary <paramref name="matchFunc">matching function</paramref> returns true.</summary>
+        /// <param name="matchFunc">The match function.</param>
+        public AssertSyntaxProvider True(Expression<Func<bool>> matchFunc)
+        {
+            assertProvider.True(matchFunc);
+            return assertSyntaxProvider;
+        }
+
+        /// <summary>Assert the current web browser's URL to match <paramref name="expectedUrl" />.</summary>
+        /// <param name="expectedUrl">Fully-qualified URL to use for matching..</param>
+        public AssertSyntaxProvider Url(string expectedUrl) => Url(new Uri(expectedUrl, UriKind.Absolute));
+
+        /// <summary>Assert the current web browser's URI to match <paramref name="expectedUri" />.</summary>
+        /// <param name="expectedUri">Absolute URI to use for matching..</param>
+        public AssertSyntaxProvider Url(Uri expectedUri)
+        {
+            assertProvider.Url(expectedUri);
+            return assertSyntaxProvider;
+        }
+
+        /// <summary>
+        ///     Assert the current web browser's URI provided to the specified
+        ///     <paramref name="uriExpression">URI expression</paramref> will return true;
+        /// </summary>
+        /// <param name="uriExpression">URI expression to use for matching..</param>
+        public AssertSyntaxProvider Url(Expression<Func<Uri, bool>> uriExpression)
+        {
+            assertProvider.Url(uriExpression);
+            return assertSyntaxProvider;
+        }
+
+        /// <summary>Assert a specific integer <paramref name="value" /></summary>
+        /// <param name="value">Int32 value expected.</param>
+        public AssertValueSyntaxProvider Value(int value) => Value(value.ToString());
+
+        /// <summary>Assert a specific string <paramref name="value" />.</summary>
+        /// <param name="value">String value.</param>
+        public AssertValueSyntaxProvider Value(string value) => new AssertValueSyntaxProvider(commandProvider, assertProvider, assertSyntaxProvider, value);
+
+        /// <summary>Values the specified match function.</summary>
+        /// <param name="matchFunc">The match function.</param>
+        public AssertValueSyntaxProvider Value(Expression<Func<string, bool>> matchFunc) => new AssertValueSyntaxProvider(commandProvider, assertProvider, assertSyntaxProvider, matchFunc);
+
+        /// <summary>Assert that the element matching the selector is visible and can be interacted with.</summary>
+        /// <param name="selector">The selector.</param>
+        public AssertSyntaxProvider Visible(string selector) => Visible(selector, Defaults.FindMethod);
+
+        /// <summary>Assert that the element matching the selector is visible and can be interacted with.</summary>
+        /// <param name="selector">The selector.</param>
+        /// <param name="findMethod">The find method.</param>
+        public AssertSyntaxProvider Visible(string selector, FindBy findMethod)
+        {
+            assertProvider.Visible(selector, findMethod);
+            return this;
+        }
+
+        /// <summary>Assert that the element is visible and can be interacted with.</summary>
+        /// <param name="element">The element.</param>
+        public AssertSyntaxProvider Visible(ElementProxy element)
+        {
+            assertProvider.Visible(element);
+            return this;
         }
 
         /// <summary>The assert attribute syntax provider.</summary>
         public class AssertAttributeSyntaxProvider : BaseAssertSyntaxProvider
         {
-            private readonly string attributeName = null;
-            private readonly string attributeValue = null;
-            private readonly bool notMode = false;
+            private readonly string attributeName;
+            private readonly string attributeValue;
+            private readonly bool notMode;
 
-            /// <summary>Initializes a new instance of the <see cref="AssertAttributeSyntaxProvider"/> class.</summary>
+            /// <summary>Initializes a new instance of the <see cref="AssertAttributeSyntaxProvider" /> class.</summary>
             /// <param name="commandProvider">The command provider.</param>
             /// <param name="assertProvider">The assert provider.</param>
             /// <param name="assertSyntaxProvider">The assert syntax provider.</param>
@@ -411,7 +175,7 @@ namespace FluentAutomation
             {
             }
 
-            /// <summary>Initializes a new instance of the <see cref="AssertAttributeSyntaxProvider"/> class.</summary>
+            /// <summary>Initializes a new instance of the <see cref="AssertAttributeSyntaxProvider" /> class.</summary>
             /// <param name="commandProvider">The command provider.</param>
             /// <param name="assertProvider">The assert provider.</param>
             /// <param name="assertSyntaxProvider">The assert syntax provider.</param>
@@ -428,68 +192,239 @@ namespace FluentAutomation
 
             /// <summary>Assert that CSS Class does not match - Reverses assertions in this chain.</summary>
             /// <value>The not.</value>
-            public AssertAttributeSyntaxProvider Not
-            {
-                get
-                {
-                    return new AssertAttributeSyntaxProvider(commandProvider, assertProvider, assertSyntaxProvider, attributeName, attributeValue, true);
-                }
-            }
+            public AssertAttributeSyntaxProvider Not => new AssertAttributeSyntaxProvider(commandProvider, assertProvider, assertSyntaxProvider, attributeName, attributeValue, true);
 
             /// <summary>Element matching <paramref name="selector" /> that should have matching CSS class.</summary>
             /// <param name="selector">The selector.</param>
-            public AssertSyntaxProvider On(string selector) => this.On(selector, Defaults.FindMethod);
+            public AssertSyntaxProvider On(string selector) => On(selector, Defaults.FindMethod);
 
             /// <summary>Element matching <paramref name="selector" /> that should have matching CSS class.</summary>
             /// <param name="selector">The selector.</param>
             /// <param name="findMethod">The find method.</param>
-            public AssertSyntaxProvider On(string selector, By findMethod)
+            public AssertSyntaxProvider On(string selector, FindBy findMethod)
             {
-                if (this.notMode)
-                    this.assertProvider.NotAttribute(selector, this.attributeName, this.attributeValue, findMethod);
+                if (notMode)
+                    assertProvider.NotAttribute(selector, attributeName, attributeValue, findMethod);
                 else
-                    this.assertProvider.Attribute(selector, this.attributeName, this.attributeValue, findMethod);
+                    assertProvider.Attribute(selector, attributeName, attributeValue, findMethod);
 
-                return this.assertSyntaxProvider;
+                return assertSyntaxProvider;
             }
 
             /// <summary>Specified <paramref name="element" /> that should have matching CSS class.</summary>
             /// <param name="element">IElement factory function.</param>
             public AssertSyntaxProvider On(ElementProxy element)
             {
-                if (this.notMode)
-                    this.assertProvider.NotAttribute(element, this.attributeName, this.attributeValue);
+                if (notMode)
+                    assertProvider.NotAttribute(element, attributeName, attributeValue);
                 else
-                    this.assertProvider.Attribute(element, this.attributeName, this.attributeValue);
+                    assertProvider.Attribute(element, attributeName, attributeValue);
 
-                return this.assertSyntaxProvider;
+                return assertSyntaxProvider;
             }
         }
-        #endregion
 
-        #region Text
-        /// <summary>Assert that Text matches specified <paramref name="text" />.</summary>
-        /// <param name="text">Text that must be exactly matched.</param>
-        public AssertTextSyntaxProvider Text(string text)
+        /// <summary>The assert class syntax provider.</summary>
+        public class AssertClassSyntaxProvider : BaseAssertSyntaxProvider
         {
-            return new AssertTextSyntaxProvider(this.commandProvider, this.assertProvider, this.assertSyntaxProvider, text);
+            private readonly string className;
+            private readonly bool notMode;
+
+            /// <summary>Initializes a new instance of the <see cref="AssertClassSyntaxProvider" /> class.</summary>
+            /// <param name="commandProvider">The command provider.</param>
+            /// <param name="assertProvider">The assert provider.</param>
+            /// <param name="assertSyntaxProvider">The assert syntax provider.</param>
+            /// <param name="className">Name of the class.</param>
+            public AssertClassSyntaxProvider(ICommandProvider commandProvider, IAssertProvider assertProvider, AssertSyntaxProvider assertSyntaxProvider, string className)
+                : this(commandProvider, assertProvider, assertSyntaxProvider, className, false)
+            {
+            }
+
+            /// <summary>Initializes a new instance of the <see cref="AssertClassSyntaxProvider" /> class.</summary>
+            /// <param name="commandProvider">The command provider.</param>
+            /// <param name="assertProvider">The assert provider.</param>
+            /// <param name="assertSyntaxProvider">The assert syntax provider.</param>
+            /// <param name="className">Name of the class.</param>
+            /// <param name="notMode">if set to <see langword="true" /> [not mode].</param>
+            public AssertClassSyntaxProvider(ICommandProvider commandProvider, IAssertProvider assertProvider, AssertSyntaxProvider assertSyntaxProvider, string className, bool notMode)
+                : base(commandProvider, assertProvider, assertSyntaxProvider)
+            {
+                this.className = className;
+                this.notMode = notMode;
+            }
+
+            /// <summary>Assert that CSS Class does not match - Reverses assertions in this chain.</summary>
+            /// <value>The not.</value>
+            public AssertClassSyntaxProvider Not => new AssertClassSyntaxProvider(commandProvider, assertProvider, assertSyntaxProvider, className, true);
+
+            /// <summary>Element matching <paramref name="selector" /> that should have matching CSS class.</summary>
+            /// <param name="selector">The selector.</param>
+            public AssertSyntaxProvider On(string selector) => On(selector, Defaults.FindMethod);
+
+            /// <summary>Element matching <paramref name="selector" /> that should have matching CSS class.</summary>
+            /// <param name="selector">The selector.</param>
+            /// <param name="findMethod">The find method.</param>
+            public AssertSyntaxProvider On(string selector, FindBy findMethod)
+            {
+                if (notMode)
+                    assertProvider.NotCssClass(selector, className, findMethod);
+                else
+                    assertProvider.CssClass(selector, className, findMethod);
+
+                return assertSyntaxProvider;
+            }
+
+            /// <summary>Specified <paramref name="element" /> that should have matching CSS class.</summary>
+            /// <param name="element">IElement factory function.</param>
+            public AssertSyntaxProvider On(ElementProxy element)
+            {
+                if (notMode)
+                    assertProvider.NotCssClass(element, className);
+                else
+                    assertProvider.CssClass(element, className);
+
+                return assertSyntaxProvider;
+            }
         }
 
-        /// <summary>Assert that Text provided to specified <paramref name="matchFunc">match function</paramref> returns true.</summary>
-        /// <param name="matchFunc">Function to evaluate if Text matches. Example: (text) =&gt; text.Contains("Hello")</param>
-        public AssertTextSyntaxProvider Text(Expression<Func<string, bool>> matchFunc)
+        /// <summary>The assert count syntax provider.</summary>
+        public class AssertCountSyntaxProvider : BaseAssertSyntaxProvider
         {
-            return new AssertTextSyntaxProvider(this.commandProvider, this.assertProvider, this.assertSyntaxProvider, matchFunc);
+            private readonly int count;
+            private readonly bool notMode;
+
+            /// <summary>Initializes a new instance of the <see cref="AssertCountSyntaxProvider" /> class.</summary>
+            /// <param name="commandProvider">The command provider.</param>
+            /// <param name="assertProvider">The assert provider.</param>
+            /// <param name="assertSyntaxProvider">The assert syntax provider.</param>
+            /// <param name="count">The count.</param>
+            public AssertCountSyntaxProvider(ICommandProvider commandProvider, IAssertProvider assertProvider, AssertSyntaxProvider assertSyntaxProvider, int count)
+                : this(commandProvider, assertProvider, assertSyntaxProvider, count, false)
+            {
+            }
+
+            /// <summary>Initializes a new instance of the <see cref="AssertCountSyntaxProvider" /> class.</summary>
+            /// <param name="commandProvider">The command provider.</param>
+            /// <param name="assertProvider">The assert provider.</param>
+            /// <param name="assertSyntaxProvider">The assert syntax provider.</param>
+            /// <param name="count">The count.</param>
+            /// <param name="notMode">if set to <see langword="true" /> [not mode].</param>
+            public AssertCountSyntaxProvider(ICommandProvider commandProvider, IAssertProvider assertProvider, AssertSyntaxProvider assertSyntaxProvider, int count, bool notMode)
+                : base(commandProvider, assertProvider, assertSyntaxProvider)
+            {
+                this.count = count;
+                this.notMode = notMode;
+            }
+
+            /// <summary>Assert that the Count does not match - Reverses assertions in this chain.</summary>
+            /// <value>The not.</value>
+            public AssertCountSyntaxProvider Not => new AssertCountSyntaxProvider(commandProvider, assertProvider, assertSyntaxProvider, count, true);
+
+            /// <summary>Elements matching <paramref name="selector" /> to be counted.</summary>
+            /// <param name="selector">The selector.</param>
+            public AssertSyntaxProvider Of(string selector) => Of(selector, Defaults.FindMethod);
+
+            /// <summary>Elements matching <paramref name="selector" /> to be counted.</summary>
+            /// <param name="selector">The selector.</param>
+            /// <param name="findMethod">The find method.</param>
+            public AssertSyntaxProvider Of(string selector, FindBy findMethod)
+            {
+                if (notMode)
+                    assertProvider.NotCount(selector, count, findMethod);
+                else
+                    assertProvider.Count(selector, count, findMethod);
+
+                return assertSyntaxProvider;
+            }
+
+            /// <summary>Specified <paramref name="elements" /> to be counted.</summary>
+            /// <param name="elements">IElement collection factory function.</param>
+            public AssertSyntaxProvider Of(ElementProxy elements)
+            {
+                if (notMode)
+                    assertProvider.NotCount(elements, count);
+                else
+                    assertProvider.Count(elements, count);
+
+                return assertSyntaxProvider;
+            }
+        }
+
+        /// <summary>The assert CSS property syntax provider.</summary>
+        public class AssertCssPropertySyntaxProvider : BaseAssertSyntaxProvider
+        {
+            private readonly bool notMode;
+            private readonly string propertyName;
+            private readonly string propertyValue;
+
+            /// <summary>Initializes a new instance of the <see cref="AssertCssPropertySyntaxProvider" /> class.</summary>
+            /// <param name="commandProvider">The command provider.</param>
+            /// <param name="assertProvider">The assert provider.</param>
+            /// <param name="assertSyntaxProvider">The assert syntax provider.</param>
+            /// <param name="propertyName">Name of the property.</param>
+            /// <param name="propertyValue">The property value.</param>
+            public AssertCssPropertySyntaxProvider(ICommandProvider commandProvider, IAssertProvider assertProvider, AssertSyntaxProvider assertSyntaxProvider, string propertyName, string propertyValue)
+                : this(commandProvider, assertProvider, assertSyntaxProvider, propertyName, propertyValue, false)
+            {
+            }
+
+            /// <summary>Initializes a new instance of the <see cref="AssertCssPropertySyntaxProvider" /> class.</summary>
+            /// <param name="commandProvider">The command provider.</param>
+            /// <param name="assertProvider">The assert provider.</param>
+            /// <param name="assertSyntaxProvider">The assert syntax provider.</param>
+            /// <param name="propertyName">Name of the property.</param>
+            /// <param name="propertyValue">The property value.</param>
+            /// <param name="notMode">if set to <see langword="true" /> [not mode].</param>
+            public AssertCssPropertySyntaxProvider(ICommandProvider commandProvider, IAssertProvider assertProvider, AssertSyntaxProvider assertSyntaxProvider, string propertyName, string propertyValue, bool notMode)
+                : base(commandProvider, assertProvider, assertSyntaxProvider)
+            {
+                this.propertyName = propertyName;
+                this.propertyValue = propertyValue;
+                this.notMode = notMode;
+            }
+
+            /// <summary>Assert that CSS Class does not match - Reverses assertions in this chain.</summary>
+            /// <value>The not.</value>
+            public AssertCssPropertySyntaxProvider Not => new AssertCssPropertySyntaxProvider(commandProvider, assertProvider, assertSyntaxProvider, propertyName, propertyValue, true);
+
+            /// <summary>Element matching <paramref name="selector" /> that should have matching CSS class.</summary>
+            /// <param name="selector">The selector.</param>
+            public AssertSyntaxProvider On(string selector) => On(selector, Defaults.FindMethod);
+
+            /// <summary>Element matching <paramref name="selector" /> that should have matching CSS class.</summary>
+            /// <param name="selector">The selector.</param>
+            /// <param name="findMethod">The find method.</param>
+            public AssertSyntaxProvider On(string selector, FindBy findMethod)
+            {
+                if (notMode)
+                    assertProvider.NotCssProperty(selector, propertyName, propertyValue, findMethod);
+                else
+                    assertProvider.CssProperty(selector, propertyName, propertyValue, findMethod);
+
+                return assertSyntaxProvider;
+            }
+
+            /// <summary>Specified <paramref name="element" /> that should have matching CSS class.</summary>
+            /// <param name="element">IElement factory function.</param>
+            public AssertSyntaxProvider On(ElementProxy element)
+            {
+                if (notMode)
+                    assertProvider.NotCssProperty(element, propertyName, propertyValue);
+                else
+                    assertProvider.CssProperty(element, propertyName, propertyValue);
+
+                return assertSyntaxProvider;
+            }
         }
 
         /// <summary>The assert text syntax provider.</summary>
         public class AssertTextSyntaxProvider : BaseAssertSyntaxProvider
         {
-            private readonly string text = null;
-            private readonly Expression<Func<string, bool>> matchFunc = null;
-            private readonly bool notMode = false;
+            private readonly Expression<Func<string, bool>> matchFunc;
+            private readonly bool notMode;
+            private readonly string text;
 
-            /// <summary>Initializes a new instance of the <see cref="AssertTextSyntaxProvider"/> class.</summary>
+            /// <summary>Initializes a new instance of the <see cref="AssertTextSyntaxProvider" /> class.</summary>
             /// <param name="commandProvider">The command provider.</param>
             /// <param name="assertProvider">The assert provider.</param>
             /// <param name="assertSyntaxProvider">The assert syntax provider.</param>
@@ -497,10 +432,9 @@ namespace FluentAutomation
             public AssertTextSyntaxProvider(ICommandProvider commandProvider, IAssertProvider assertProvider, AssertSyntaxProvider assertSyntaxProvider, string text)
                 : this(commandProvider, assertProvider, assertSyntaxProvider, text, false)
             {
-
             }
 
-            /// <summary>Initializes a new instance of the <see cref="AssertTextSyntaxProvider"/> class.</summary>
+            /// <summary>Initializes a new instance of the <see cref="AssertTextSyntaxProvider" /> class.</summary>
             /// <param name="commandProvider">The command provider.</param>
             /// <param name="assertProvider">The assert provider.</param>
             /// <param name="assertSyntaxProvider">The assert syntax provider.</param>
@@ -513,7 +447,7 @@ namespace FluentAutomation
                 this.notMode = notMode;
             }
 
-            /// <summary>Initializes a new instance of the <see cref="AssertTextSyntaxProvider"/> class.</summary>
+            /// <summary>Initializes a new instance of the <see cref="AssertTextSyntaxProvider" /> class.</summary>
             /// <param name="commandProvider">The command provider.</param>
             /// <param name="assertProvider">The assert provider.</param>
             /// <param name="assertSyntaxProvider">The assert syntax provider.</param>
@@ -523,7 +457,7 @@ namespace FluentAutomation
             {
             }
 
-            /// <summary>Initializes a new instance of the <see cref="AssertTextSyntaxProvider"/> class.</summary>
+            /// <summary>Initializes a new instance of the <see cref="AssertTextSyntaxProvider" /> class.</summary>
             /// <param name="commandProvider">The command provider.</param>
             /// <param name="assertProvider">The assert provider.</param>
             /// <param name="assertSyntaxProvider">The assert syntax provider.</param>
@@ -542,63 +476,57 @@ namespace FluentAutomation
             {
                 get
                 {
-                    if (this.matchFunc != null)
-                        return new AssertTextSyntaxProvider(commandProvider, assertProvider, assertSyntaxProvider, this.matchFunc, true);
-                    else
-                        return new AssertTextSyntaxProvider(commandProvider, assertProvider, assertSyntaxProvider, this.text, true);
+                    if (matchFunc != null)
+                        return new AssertTextSyntaxProvider(commandProvider, assertProvider, assertSyntaxProvider, matchFunc, true);
+                    return new AssertTextSyntaxProvider(commandProvider, assertProvider, assertSyntaxProvider, text, true);
                 }
             }
 
             /// <summary>Element matching <paramref name="selector" /> that should match Text.</summary>
             /// <param name="selector">The selector.</param>
-            public AssertSyntaxProvider In(string selector) => this.In(selector, Defaults.FindMethod);
+            public AssertSyntaxProvider In(string selector) => In(selector, Defaults.FindMethod);
 
             /// <summary>Element matching <paramref name="selector" /> that should match Text.</summary>
             /// <param name="selector">The selector.</param>
             /// <param name="findMethod">The find method.</param>
-            public AssertSyntaxProvider In(string selector, By findMethod)
+            public AssertSyntaxProvider In(string selector, FindBy findMethod)
             {
-                if (!string.IsNullOrEmpty(this.text))
-                {
-                    if (this.notMode)
-                        this.assertProvider.NotText(selector, this.text, findMethod);
+                if (!string.IsNullOrEmpty(text))
+                    if (notMode)
+                        assertProvider.NotText(selector, text, findMethod);
                     else
-                        this.assertProvider.Text(selector, this.text, findMethod);
-                }
-                else if (this.matchFunc != null)
-                {
-                    if (this.notMode)
-                        this.assertProvider.NotText(selector, this.matchFunc, findMethod);
+                        assertProvider.Text(selector, text, findMethod);
+                else if (matchFunc != null)
+                    if (notMode)
+                        assertProvider.NotText(selector, matchFunc, findMethod);
                     else
-                        this.assertProvider.Text(selector, this.matchFunc, findMethod);
-                }
+                        assertProvider.Text(selector, matchFunc, findMethod);
 
-                return this.assertSyntaxProvider;
+                return assertSyntaxProvider;
             }
 
             /// <summary>Specified <paramref name="element" /> that should match Text.</summary>
             /// <param name="element">IElement factory function.</param>
             public AssertSyntaxProvider In(ElementProxy element)
             {
-                if (!string.IsNullOrEmpty(this.text))
-                {
-                    if (this.notMode)
-                        this.assertProvider.NotText(element, this.text);
+                if (!string.IsNullOrEmpty(text))
+                    if (notMode)
+                        assertProvider.NotText(element, text);
                     else
-                        this.assertProvider.Text(element, this.text);
-                }
-                else if (this.matchFunc != null)
-                {
-                    if (this.notMode)
-                        this.assertProvider.NotText(element, this.matchFunc);
+                        assertProvider.Text(element, text);
+                else if (matchFunc != null)
+                    if (notMode)
+                        assertProvider.NotText(element, matchFunc);
                     else
-                        this.assertProvider.Text(element, this.matchFunc);
-                }
+                        assertProvider.Text(element, matchFunc);
 
-                return this.assertSyntaxProvider;
+                return assertSyntaxProvider;
             }
 
-            /// <summary>Look in the active Alert/Prompt for the specified text. If the text does not match the prompt will be cleanly exited to allow clean failure or continuation of the test.</summary>
+            /// <summary>
+            ///     Look in the active Alert/Prompt for the specified text. If the text does not match the prompt will be cleanly
+            ///     exited to allow clean failure or continuation of the test.
+            /// </summary>
             /// <param name="accessor">The accessor.</param>
             /// <exception cref="FluentException">FluentAutomation only supports checking the message in an alerts or prompts.</exception>
             public AssertSyntaxProvider In(Alert accessor)
@@ -606,57 +534,34 @@ namespace FluentAutomation
                 if (accessor != Alert.Message)
                     throw new FluentException("FluentAutomation only supports checking the message in an alerts or prompts.");
 
-                if (this.matchFunc == null)
+                if (matchFunc == null)
                 {
-                    if (this.notMode)
-                        this.assertProvider.AlertNotText(this.text);
+                    if (notMode)
+                        assertProvider.AlertNotText(text);
                     else
-                        this.assertProvider.AlertText(this.text);
+                        assertProvider.AlertText(text);
                 }
                 else
                 {
-                    if (this.notMode)
-                        this.assertProvider.AlertNotText(this.matchFunc);
+                    if (notMode)
+                        assertProvider.AlertNotText(matchFunc);
                     else
-                        this.assertProvider.AlertText(this.matchFunc);
+                        assertProvider.AlertText(matchFunc);
                 }
 
-                return this.assertSyntaxProvider;
+                return assertSyntaxProvider;
             }
-        }
-        #endregion
-
-        #region Value
-        /// <summary>Assert a specific integer <paramref name="value" /></summary>
-        /// <param name="value">Int32 value expected.</param>
-        public AssertValueSyntaxProvider Value(int value)
-        {
-            return this.Value(value.ToString());
-        }
-
-        /// <summary>Assert a specific string <paramref name="value" />.</summary>
-        /// <param name="value">String value.</param>
-        public AssertValueSyntaxProvider Value(string value)
-        {
-            return new AssertValueSyntaxProvider(this.commandProvider, this.assertProvider, this.assertSyntaxProvider, value);
-        }
-
-        /// <summary>Values the specified match function.</summary>
-        /// <param name="matchFunc">The match function.</param>
-        public AssertValueSyntaxProvider Value(Expression<Func<string, bool>> matchFunc)
-        {
-            return new AssertValueSyntaxProvider(this.commandProvider, this.assertProvider, this.assertSyntaxProvider, matchFunc);
         }
 
         /// <summary>The assert value syntax provider.</summary>
         public class AssertValueSyntaxProvider : BaseAssertSyntaxProvider
         {
-            private readonly string value = null;
-            private readonly Expression<Func<string, bool>> matchFunc = null;
-            private readonly bool notMode = false;
+            private readonly Expression<Func<string, bool>> matchFunc;
+            private readonly bool notMode;
+            private readonly string value;
 
 
-            /// <summary>Initializes a new instance of the <see cref="AssertValueSyntaxProvider"/> class.</summary>
+            /// <summary>Initializes a new instance of the <see cref="AssertValueSyntaxProvider" /> class.</summary>
             /// <param name="commandProvider">The command provider.</param>
             /// <param name="assertProvider">The assert provider.</param>
             /// <param name="assertSyntaxProvider">The assert syntax provider.</param>
@@ -666,7 +571,7 @@ namespace FluentAutomation
             {
             }
 
-            /// <summary>Initializes a new instance of the <see cref="AssertValueSyntaxProvider"/> class.</summary>
+            /// <summary>Initializes a new instance of the <see cref="AssertValueSyntaxProvider" /> class.</summary>
             /// <param name="commandProvider">The command provider.</param>
             /// <param name="assertProvider">The assert provider.</param>
             /// <param name="assertSyntaxProvider">The assert syntax provider.</param>
@@ -679,7 +584,7 @@ namespace FluentAutomation
                 this.notMode = notMode;
             }
 
-            /// <summary>Initializes a new instance of the <see cref="AssertValueSyntaxProvider"/> class.</summary>
+            /// <summary>Initializes a new instance of the <see cref="AssertValueSyntaxProvider" /> class.</summary>
             /// <param name="commandProvider">The command provider.</param>
             /// <param name="assertProvider">The assert provider.</param>
             /// <param name="assertSyntaxProvider">The assert syntax provider.</param>
@@ -689,7 +594,7 @@ namespace FluentAutomation
             {
             }
 
-            /// <summary>Initializes a new instance of the <see cref="AssertValueSyntaxProvider"/> class.</summary>
+            /// <summary>Initializes a new instance of the <see cref="AssertValueSyntaxProvider" /> class.</summary>
             /// <param name="commandProvider">The command provider.</param>
             /// <param name="assertProvider">The assert provider.</param>
             /// <param name="assertSyntaxProvider">The assert syntax provider.</param>
@@ -708,60 +613,51 @@ namespace FluentAutomation
             {
                 get
                 {
-                    if (this.matchFunc != null)
-                        return new AssertValueSyntaxProvider(commandProvider, assertProvider, assertSyntaxProvider, this.matchFunc, true);
-                    else
-                        return new AssertValueSyntaxProvider(commandProvider, assertProvider, assertSyntaxProvider, this.value, true);
+                    if (matchFunc != null)
+                        return new AssertValueSyntaxProvider(commandProvider, assertProvider, assertSyntaxProvider, matchFunc, true);
+                    return new AssertValueSyntaxProvider(commandProvider, assertProvider, assertSyntaxProvider, value, true);
                 }
             }
 
             /// <summary>Element matching <paramref name="selector" /> that should have a matching Value.</summary>
             /// <param name="selector">The selector.</param>
-            public AssertSyntaxProvider In(string selector) => this.In(selector, Defaults.FindMethod);
+            public AssertSyntaxProvider In(string selector) => In(selector, Defaults.FindMethod);
 
             /// <summary>Element matching <paramref name="selector" /> that should have a matching Value.</summary>
             /// <param name="selector">The selector.</param>
             /// <param name="findMethod">The find method.</param>
-            public AssertSyntaxProvider In(string selector, By findMethod)
+            public AssertSyntaxProvider In(string selector, FindBy findMethod)
             {
-                if (!string.IsNullOrEmpty(this.value))
-                {
-                    if (this.notMode)
-                        this.assertProvider.NotValue(selector, this.value, findMethod);
+                if (!string.IsNullOrEmpty(value))
+                    if (notMode)
+                        assertProvider.NotValue(selector, value, findMethod);
                     else
-                        this.assertProvider.Value(selector, this.value, findMethod);
-                }
-                else if (this.matchFunc != null)
-                {
-                    if (this.notMode)
-                        this.assertProvider.NotValue(selector, this.matchFunc, findMethod);
+                        assertProvider.Value(selector, value, findMethod);
+                else if (matchFunc != null)
+                    if (notMode)
+                        assertProvider.NotValue(selector, matchFunc, findMethod);
                     else
-                        this.assertProvider.Value(selector, this.matchFunc, findMethod);
-                }
+                        assertProvider.Value(selector, matchFunc, findMethod);
 
-                return this.assertSyntaxProvider;
+                return assertSyntaxProvider;
             }
 
             /// <summary>Specified <paramref name="element" /> that should have a matching Value.</summary>
             /// <param name="element">The element.</param>
             public AssertSyntaxProvider In(ElementProxy element)
             {
-                if (!string.IsNullOrEmpty(this.value))
-                {
-                    if (this.notMode)
-                        this.assertProvider.NotValue(element, this.value);
+                if (!string.IsNullOrEmpty(value))
+                    if (notMode)
+                        assertProvider.NotValue(element, value);
                     else
-                        this.assertProvider.Value(element, this.value);
-                }
-                else if (this.matchFunc != null)
-                {
-                    if (this.notMode)
-                        this.assertProvider.NotValue(element, this.matchFunc);
+                        assertProvider.Value(element, value);
+                else if (matchFunc != null)
+                    if (notMode)
+                        assertProvider.NotValue(element, matchFunc);
                     else
-                        this.assertProvider.Value(element, this.matchFunc);
-                }
+                        assertProvider.Value(element, matchFunc);
 
-                return this.assertSyntaxProvider;
+                return assertSyntaxProvider;
             }
 
             /// <summary>Look in the active Alert/Prompt for the specified value.</summary>
@@ -771,135 +667,145 @@ namespace FluentAutomation
             {
                 if (accessor != Alert.Message)
                 {
-                    this.commandProvider.AlertClick(Alert.Cancel);
+                    commandProvider.AlertClick(Alert.Cancel);
                     throw new FluentException("FluentAutomation only supports checking the message in an alerts or prompts.");
                 }
 
-                if (this.matchFunc == null)
+                if (matchFunc == null)
                 {
-                    if (this.notMode)
-                        this.assertProvider.AlertNotText(this.value.ToString());
+                    if (notMode)
+                        assertProvider.AlertNotText(value);
                     else
-                        this.assertProvider.AlertText(this.value.ToString());
+                        assertProvider.AlertText(value);
                 }
                 else
                 {
-                    if (this.notMode)
-                        this.assertProvider.AlertNotText(this.matchFunc);
+                    if (notMode)
+                        assertProvider.AlertNotText(matchFunc);
                     else
-                        this.assertProvider.AlertText(this.matchFunc);
+                        assertProvider.AlertText(matchFunc);
                 }
 
-                return this.assertSyntaxProvider;
+                return assertSyntaxProvider;
             }
         }
-        #endregion
 
-        #region Url
-        /// <summary>Assert the current web browser's URL to match <paramref name="expectedUrl" />.</summary>
-        /// <param name="expectedUrl">Fully-qualified URL to use for matching..</param>
-        public AssertSyntaxProvider Url(string expectedUrl)
+        /// <summary>The not assert syntax provider.</summary>
+        public class NotAssertSyntaxProvider : BaseAssertSyntaxProvider
         {
-            return Url(new Uri(expectedUrl, UriKind.Absolute));
-        }
+            /// <summary>Initializes a new instance of the <see cref="NotAssertSyntaxProvider" /> class.</summary>
+            /// <param name="commandProvider">The command provider.</param>
+            /// <param name="assertProvider">The assert provider.</param>
+            /// <param name="assertSyntaxProvider">The assert syntax provider.</param>
+            public NotAssertSyntaxProvider(ICommandProvider commandProvider, IAssertProvider assertProvider, AssertSyntaxProvider assertSyntaxProvider)
+                : base(commandProvider, assertProvider, assertSyntaxProvider)
+            {
+            }
 
-        /// <summary>Assert the current web browser's URI to match <paramref name="expectedUri" />.</summary>
-        /// <param name="expectedUri">Absolute URI to use for matching..</param>
-        public AssertSyntaxProvider Url(Uri expectedUri)
-        {
-            this.assertProvider.Url(expectedUri);
-            return this.assertSyntaxProvider;
-        }
+            /// <summary>Assert the element specified does not exist.</summary>
+            /// <param name="selector">Element selector.</param>
+            public AssertSyntaxProvider Exists(string selector) => Exists(selector, Defaults.FindMethod);
 
-        /// <summary>Assert the current web browser's URI provided to the specified <paramref name="uriExpression">URI expression</paramref> will return true;</summary>
-        /// <param name="uriExpression">URI expression to use for matching..</param>
-        public AssertSyntaxProvider Url(Expression<Func<Uri, bool>> uriExpression)
-        {
-            this.assertProvider.Url(uriExpression);
-            return this.assertSyntaxProvider;
-        }
-        #endregion
+            /// <summary>Assert the element specified does not exist.</summary>
+            /// <param name="selector">Element selector.</param>
+            /// <param name="findMethod">The find method.</param>
+            public AssertSyntaxProvider Exists(string selector, FindBy findMethod)
+            {
+                assertProvider.NotExists(selector, findMethod);
+                return assertSyntaxProvider;
+            }
 
-        #region Boolean / Throws
-        /// <summary>Assert that an arbitrary <paramref name="matchFunc">matching function</paramref> returns true.</summary>
-        /// <param name="matchFunc">The match function.</param>
-        public AssertSyntaxProvider True(Expression<Func<bool>> matchFunc)
-        {
-            this.assertProvider.True(matchFunc);
-            return this.assertSyntaxProvider;
-        }
+            /// <summary>Assert the element specified does not exist.</summary>
+            /// <param name="element">The element.</param>
+            public AssertSyntaxProvider Exists(ElementProxy element)
+            {
+                assertProvider.NotExists(element);
+                return assertSyntaxProvider;
+            }
 
-        /// <summary>Assert that an arbitrary <paramref name="matchFunc">matching function</paramref> returns false.</summary>
-        /// <param name="matchFunc">The match function.</param>
-        public AssertSyntaxProvider False(Expression<Func<bool>> matchFunc)
-        {
-            this.assertProvider.False(matchFunc);
-            return this.assertSyntaxProvider;
-        }
+            /// <summary>Assert that an arbitrary <paramref name="matchFunc">matching function</paramref> does not return false.</summary>
+            /// <param name="matchFunc">The match function.</param>
+            public AssertSyntaxProvider False(Expression<Func<bool>> matchFunc)
+            {
+                assertProvider.True(matchFunc);
+                return assertSyntaxProvider;
+            }
 
-        /// <summary>Assert that an arbitrary <paramref name="matchAction">action</paramref> throws an Exception.</summary>
-        /// <param name="matchAction">The match action.</param>
-        public AssertSyntaxProvider Throws(Expression<Action> matchAction)
-        {
-            this.assertProvider.Throws(matchAction);
-            return this.assertSyntaxProvider;
-        }
-        #endregion
+            /// <summary>Assert that an arbitrary <paramref name="matchAction">action</paramref> does not throw an Exception.</summary>
+            /// <param name="matchAction">The match action.</param>
+            public AssertSyntaxProvider Throws(Expression<Action> matchAction)
+            {
+                assertProvider.NotThrows(matchAction);
+                return assertSyntaxProvider;
+            }
 
-        /// <summary>Assert the element specified exists.</summary>
-        /// <param name="selector">Element selector.</param>
-        public AssertSyntaxProvider Exists(string selector) => this.Exists(selector, Defaults.FindMethod);
+            /// <summary>Assert that an arbitrary <paramref name="matchFunc">matching function</paramref> does not return true.</summary>
+            /// <param name="matchFunc">The match function.</param>
+            public AssertSyntaxProvider True(Expression<Func<bool>> matchFunc)
+            {
+                assertProvider.False(matchFunc);
+                return assertSyntaxProvider;
+            }
 
-        /// <summary>Assert the element specified exists.</summary>
-        /// <param name="selector">Element selector.</param>
-        /// <param name="findMethod">The find method.</param>
-        public AssertSyntaxProvider Exists(string selector, By findMethod)
-        {
-            this.assertProvider.Exists(selector, findMethod);
-            return this.assertSyntaxProvider;
-        }
+            /// <summary>Assert the current web browser's URL not to match <paramref name="expectedUrl" />.</summary>
+            /// <param name="expectedUrl">Fully-qualified URL to use for matching..</param>
+            public AssertSyntaxProvider Url(string expectedUrl) => Url(new Uri(expectedUrl, UriKind.Absolute));
 
-        /// <summary>Assert the element specified exists.</summary>
-        /// <param name="element">Reference to element</param>
-        public AssertSyntaxProvider Exists(ElementProxy element)
-        {
-            this.assertProvider.Exists(element);
-            return this.assertSyntaxProvider;
-        }
+            /// <summary>Assert the current web browser's URI shouldn't match <paramref name="expectedUri" />.</summary>
+            /// <param name="expectedUri">Absolute URI to use for matching.</param>
+            public AssertSyntaxProvider Url(Uri expectedUri)
+            {
+                assertProvider.NotUrl(expectedUri);
+                return assertSyntaxProvider;
+            }
 
-        /// <summary>Assert that the element matching the selector is visible and can be interacted with.</summary>
-        /// <param name="selector">The selector.</param>
-        public AssertSyntaxProvider Visible(string selector) => this.Visible(selector, Defaults.FindMethod);
+            /// <summary>
+            ///     Assert the current web browser's URI provided to the specified
+            ///     <paramref name="uriExpression">URI expression</paramref> will return false;
+            /// </summary>
+            /// <param name="uriExpression">URI expression to use for matching.</param>
+            public AssertSyntaxProvider Url(Expression<Func<Uri, bool>> uriExpression)
+            {
+                assertProvider.NotUrl(uriExpression);
+                return assertSyntaxProvider;
+            }
 
-        /// <summary>Assert that the element matching the selector is visible and can be interacted with.</summary>
-        /// <param name="selector">The selector.</param>
-        /// <param name="findMethod">The find method.</param>
-        public AssertSyntaxProvider Visible(string selector, By findMethod)
-        {
-            this.assertProvider.Visible(selector, findMethod);
-            return this;
-        }
+            /// <summary>Assert that the element matching the selector is not visible and cannot be interacted with.</summary>
+            /// <param name="selector">The selector.</param>
+            public AssertSyntaxProvider Visible(string selector) => Visible(selector, Defaults.FindMethod);
 
-        /// <summary>Assert that the element is visible and can be interacted with.</summary>
-        /// <param name="element">The element.</param>
-        public AssertSyntaxProvider Visible(ElementProxy element)
-        {
-            this.assertProvider.Visible(element);
-            return this;
+            /// <summary>Assert that the element matching the selector is not visible and cannot be interacted with.</summary>
+            /// <param name="selector">The selector.</param>
+            /// <param name="findMethod">The find method.</param>
+            public AssertSyntaxProvider Visible(string selector, FindBy findMethod)
+            {
+                assertProvider.NotVisible(selector, findMethod);
+                return assertSyntaxProvider;
+            }
+
+            /// <summary>Assert that the element is not visible and cannot be interacted with.</summary>
+            /// <param name="element">The element.</param>
+            public AssertSyntaxProvider Visible(ElementProxy element)
+            {
+                assertProvider.NotVisible(element);
+                return assertSyntaxProvider;
+            }
         }
     }
 
     /// <summary>The base assert syntax provider.</summary>
     public class BaseAssertSyntaxProvider
     {
-        /// <summary>The command provider.</summary>
-        internal readonly ICommandProvider commandProvider = null;
         /// <summary>The assert provider.</summary>
-        internal readonly IAssertProvider assertProvider = null;
-        /// <summary>The assert syntax provider.</summary>
-        internal readonly AssertSyntaxProvider assertSyntaxProvider = null;
+        internal readonly IAssertProvider assertProvider;
 
-        /// <summary>Initializes a new instance of the <see cref="BaseAssertSyntaxProvider"/> class.</summary>
+        /// <summary>The assert syntax provider.</summary>
+        internal readonly AssertSyntaxProvider assertSyntaxProvider;
+
+        /// <summary>The command provider.</summary>
+        internal readonly ICommandProvider commandProvider;
+
+        /// <summary>Initializes a new instance of the <see cref="BaseAssertSyntaxProvider" /> class.</summary>
         /// <param name="commandProvider">The command provider.</param>
         /// <param name="assertProvider">The assert provider.</param>
         public BaseAssertSyntaxProvider(ICommandProvider commandProvider, IAssertProvider assertProvider)
@@ -907,7 +813,7 @@ namespace FluentAutomation
         {
         }
 
-        /// <summary>Initializes a new instance of the <see cref="BaseAssertSyntaxProvider"/> class.</summary>
+        /// <summary>Initializes a new instance of the <see cref="BaseAssertSyntaxProvider" /> class.</summary>
         /// <param name="commandProvider">The command provider.</param>
         /// <param name="assertProvider">The assert provider.</param>
         /// <param name="assertSyntaxProvider">The assert syntax provider.</param>

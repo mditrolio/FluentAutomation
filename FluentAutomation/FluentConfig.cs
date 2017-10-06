@@ -1,21 +1,16 @@
-﻿using FluentAutomation.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace FluentAutomation
+﻿namespace FluentAutomation
 {
+    using System;
+
+    using Exceptions;
+
+    using TinyIoC;
+
     public class FluentConfig
     {
-        private static FluentConfig current = new FluentConfig();
-        public static FluentConfig Current { get { return current; } }
+        public static FluentConfig Current { get; } = new FluentConfig();
 
-        public FluentSettings Settings { get { return FluentSettings.Current; } }
-
-        public FluentConfig()
-        {
-        }
+        public FluentSettings Settings => FluentSettings.Current;
 
         public FluentConfig Configure(FluentSettings settings)
         {
@@ -23,111 +18,112 @@ namespace FluentAutomation
             return this;
         }
 
-        public FluentConfig UserTempDirectory(string tempDir)
+        public FluentConfig ContainerRegistration(Action<TinyIoCContainer> registrationMethod)
         {
-            this.Settings.UserTempDirectory = tempDir;
-            return this;
-        }
-
-        public FluentConfig ScreenshotPath(string screenshotPath)
-        {
-            this.Settings.ScreenshotPath = screenshotPath;
-            return this;
-        }
-
-        public FluentConfig ScreenshotPrefix(string prefix)
-        {
-            this.Settings.ScreenshotPrefix = prefix;
-            return this;
-        }
-
-        public FluentConfig ScreenshotOnFailedExpect(bool screenshotOnFail)
-        {
-            this.Settings.ScreenshotOnFailedExpect = screenshotOnFail;
-            return this;
-        }
-
-        public FluentConfig ScreenshotOnFailedAction(bool screenshotOnFail)
-        {
-            this.Settings.ScreenshotOnFailedAction = screenshotOnFail;
-            return this;
-        }
-
-        public FluentConfig ScreenshotOnFailedAssert(bool screenshotOnFail)
-        {
-            this.Settings.ScreenshotOnFailedAssert = screenshotOnFail;
-            return this;
-        }
-
-        public FluentConfig WaitOnAllActions(bool wait)
-        {
-            this.Settings.WaitOnAllActions = wait;
-            return this;
-        }
-
-        public FluentConfig WaitOnAllExpects(bool wait)
-        {
-            this.Settings.WaitOnAllExpects = wait;
-            return this;
-        }
-
-        public FluentConfig MinimizeAllWindowsOnTestStart(bool minimize)
-        {
-            this.Settings.MinimizeAllWindowsOnTestStart = minimize;
-            return this;
-        }
-
-        public FluentConfig WindowSize(int width, int height)
-        {
-            this.Settings.WindowHeight = height;
-            this.Settings.WindowWidth = width;
-            return this;
-        }
-
-        public FluentConfig WindowMaximized(bool isMaximized)
-        {
-            this.Settings.WindowMaximized = isMaximized;
+            Settings.ContainerRegistration = registrationMethod;
             return this;
         }
 
         public FluentConfig ExpectIsAssert(bool isAssert)
         {
-            this.Settings.ExpectIsAssert = isAssert;
+            Settings.ExpectIsAssert = isAssert;
             return this;
         }
 
-        public FluentConfig WaitTimeout(TimeSpan timeout)
+        public FluentConfig MinimizeAllWindowsOnTestStart(bool minimize)
         {
-            this.Settings.WaitTimeout = timeout;
-            return this;
-        }
-
-        public FluentConfig WaitUntilTimeout(TimeSpan timeout)
-        {
-            this.Settings.WaitUntilTimeout = timeout;
-            return this;
-        }
-
-        public FluentConfig WaitUntilInterval(TimeSpan sleep) {
-            this.Settings.WaitUntilInterval = sleep;
-            return this;
-        }
-
-        public FluentConfig ContainerRegistration(Action<TinyIoC.TinyIoCContainer> registrationMethod)
-        {
-            this.Settings.ContainerRegistration = registrationMethod;
+            Settings.MinimizeAllWindowsOnTestStart = minimize;
             return this;
         }
 
         public FluentConfig OnAssertFailed(Action<FluentAssertFailedException, WindowState> action)
         {
-            this.Settings.OnAssertFailed = action;
+            Settings.OnAssertFailed = action;
             return this;
         }
 
         public FluentConfig OnExpectFailed(Action<FluentExpectFailedException, WindowState> action)
         {
-            this.Settings.OnExpectFailed = action;
+            Settings.OnExpectFailed = action;
+            return this;
+        }
+
+        public FluentConfig ScreenshotOnFailedAction(bool screenshotOnFail)
+        {
+            Settings.ScreenshotOnFailedAction = screenshotOnFail;
+            return this;
+        }
+
+        public FluentConfig ScreenshotOnFailedAssert(bool screenshotOnFail)
+        {
+            Settings.ScreenshotOnFailedAssert = screenshotOnFail;
+            return this;
+        }
+
+        public FluentConfig ScreenshotOnFailedExpect(bool screenshotOnFail)
+        {
+            Settings.ScreenshotOnFailedExpect = screenshotOnFail;
+            return this;
+        }
+
+        public FluentConfig ScreenshotPath(string screenshotPath)
+        {
+            Settings.ScreenshotPath = screenshotPath;
+            return this;
+        }
+
+        public FluentConfig ScreenshotPrefix(string prefix)
+        {
+            Settings.ScreenshotPrefix = prefix;
+            return this;
+        }
+
+        public FluentConfig UserTempDirectory(string tempDir)
+        {
+            Settings.UserTempDirectory = tempDir;
+            return this;
+        }
+
+        public FluentConfig WaitOnAllActions(bool wait)
+        {
+            Settings.WaitOnAllActions = wait;
+            return this;
+        }
+
+        public FluentConfig WaitOnAllExpects(bool wait)
+        {
+            Settings.WaitOnAllExpects = wait;
+            return this;
+        }
+
+        public FluentConfig WaitTimeout(TimeSpan timeout)
+        {
+            Settings.WaitTimeout = timeout;
+            return this;
+        }
+
+        public FluentConfig WaitUntilInterval(TimeSpan sleep)
+        {
+            Settings.WaitUntilInterval = sleep;
+            return this;
+        }
+
+        public FluentConfig WaitUntilTimeout(TimeSpan timeout)
+        {
+            Settings.WaitUntilTimeout = timeout;
+            return this;
+        }
+
+        public FluentConfig WindowMaximized(bool isMaximized)
+        {
+            Settings.WindowMaximized = isMaximized;
+            return this;
+        }
+
+        public FluentConfig WindowSize(int width, int height)
+        {
+            Settings.WindowHeight = height;
+            Settings.WindowWidth = width;
             return this;
         }
     }

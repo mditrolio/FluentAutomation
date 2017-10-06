@@ -1,32 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FluentAutomation.Interfaces
+﻿namespace FluentAutomation.Interfaces
 {
+    using System.Collections.Generic;
+
     public interface IElement
     {
-        string Selector { get; }
-        By FindBy { get; }
-        string TagName { get; }
         IElementAttributeSelector Attributes { get; }
-
-        string Value { get; }
-        string Text { get; }
-
-        IEnumerable<string> SelectedOptionValues { get; }
-        IEnumerable<string> SelectedOptionTextCollection { get; }
+        FindBy FindBy { get; }
+        int Height { get; }
+        bool IsMultipleSelect { get; }
+        bool IsSelect { get; }
 
         bool IsText { get; }
-        bool IsSelect { get; }
-        bool IsMultipleSelect { get; }
 
         int PosX { get; }
         int PosY { get; }
+        IEnumerable<string> SelectedOptionTextCollection { get; }
+
+        IEnumerable<string> SelectedOptionValues { get; }
+        string Selector { get; }
+        string TagName { get; }
+        string Text { get; }
+
+        string Value { get; }
         int Width { get; }
-        int Height { get; }
     }
 
     public interface IElementAttributeSelector

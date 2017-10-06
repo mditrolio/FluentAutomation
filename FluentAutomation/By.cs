@@ -1,6 +1,6 @@
 ﻿namespace FluentAutomation
 {
-    public enum By
+    public enum FindBy
     {
         Css,
         XPath

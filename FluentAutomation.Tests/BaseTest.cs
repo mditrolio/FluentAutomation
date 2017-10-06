@@ -1,49 +1,48 @@
-﻿using OpenQA.Selenium;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Xunit;
-
-namespace FluentAutomation.Tests
+﻿namespace FluentAutomation.Tests
 {
+    using System;
+
+    using OpenQA.Selenium;
+
+    using Pages;
+
     /// <summary>
-    /// Base Test that opens the test to the AUT
+    ///     Base Test that opens the test to the AUT
     /// </summary>
     public class BaseTest : FluentTest<IWebDriver>
     {
-        public string SiteUrl { get { return "http://localhost:38043/"; } }
-        
+        public AlertsPage AlertsPage;
+        public DragPage DragPage;
+
+        public InputsPage InputsPage;
+        public ScrollingPage ScrollingPage;
+        public SwitchPage SwitchPage;
+        public TextPage TextPage;
+
         public BaseTest()
         {
             FluentSession.EnableStickySession();
             Config.WaitUntilTimeout(TimeSpan.FromMilliseconds(1000));
 
             // Create Page Objects
-            this.InputsPage = new Pages.InputsPage(this);
-            this.AlertsPage = new Pages.AlertsPage(this);
-            this.ScrollingPage = new Pages.ScrollingPage(this);
-            this.TextPage = new Pages.TextPage(this);
-            this.DragPage = new Pages.DragPage(this);
-            this.SwitchPage = new Pages.SwitchPage(this);
-            
+            InputsPage = new InputsPage(this);
+            AlertsPage = new AlertsPage(this);
+            ScrollingPage = new ScrollingPage(this);
+            TextPage = new TextPage(this);
+            DragPage = new DragPage(this);
+            SwitchPage = new SwitchPage(this);
+
             // Default tests use chrome and load the site
-            FluentAutomation.SeleniumWebDriver.Bootstrap(SeleniumWebDriver.Browser.Chrome);//, SeleniumWebDriver.Browser.InternetExplorer, SeleniumWebDriver.Browser.Firefox);
+            SeleniumWebDriver.Bootstrap(SeleniumWebDriver.Browser.Chrome); //, SeleniumWebDriver.Browser.InternetExplorer, SeleniumWebDriver.Browser.Firefox);
             I.Open(SiteUrl);
         }
 
-        public Pages.InputsPage InputsPage = null;
-        public Pages.AlertsPage AlertsPage = null;
-        public Pages.ScrollingPage ScrollingPage = null;
-        public Pages.TextPage TextPage = null;
-        public Pages.DragPage DragPage = null;
-        public Pages.SwitchPage SwitchPage = null;
+        public string SiteUrl => "http://localhost:38043/";
     }
 
     public class AssertBaseTest : BaseTest
     {
         public AssertBaseTest()
-            : base()
         {
             Config.OnExpectFailed((ex, state) =>
             {

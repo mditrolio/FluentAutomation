@@ -16,13 +16,7 @@ namespace FluentAutomation
     public class CommandProvider : BaseCommandProvider, ICommandProvider, IDisposable
     {
         private readonly Lazy<WatiNCore.IE> lazyBrowser = null;
-        private WatiNCore.IE browser
-        {
-            get
-            {
-                return lazyBrowser.Value;
-            }
-        }
+        private WatiNCore.IE browser => lazyBrowser.Value;
 
         private AlertDialogHandler alertHandler = null;
         internal AlertDialogHandler AlertHandler
@@ -111,28 +105,18 @@ namespace FluentAutomation
             });
         }
 
-        public Uri Url
-        {
-            get
-            {
-                return this.browser.Uri;
-            }
-        }
+        public Uri Url => this.browser.Uri;
 
-        public string Source
-        {
-            get
-            {
-                return this.browser.Body.Parent.OuterHtml;
-            }
-        }
+        public string Source => this.browser.Body.Parent.OuterHtml;
 
         public void Navigate(Uri uri)
         {
             this.browser.GoTo(uri);
         }
 
-        public ElementProxy Find(string selector, By findBy = By.Css)
+        public ElementProxy Find(string selector) => this.Find(selector, Defaults.FindMethod);
+
+        public ElementProxy Find(string selector, By findMethod)
         {
             return new ElementProxy(this, () =>
             {
@@ -150,7 +134,9 @@ namespace FluentAutomation
             });
         }
 
-        public ElementProxy FindMultiple(string selector)
+        public ElementProxy FindMultiple(string selector) => this.FindMultiple(selector, Defaults.FindMethod);
+
+        public ElementProxy FindMultiple(string selector, By findMethod)
         {
             var finalResult = new ElementProxy();
 

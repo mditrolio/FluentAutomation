@@ -1,21 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Xunit;
-
-namespace FluentAutomation.Tests.Actions
+﻿namespace FluentAutomation.Tests.Actions
 {
+    using Xunit;
+
     public class FocusTests : BaseTest
     {
         public FocusTests()
-            : base()
         {
             InputsPage.Go();
         }
 
         /// <summary>
-        /// Attempt to focus a simple block element, in this case an H1
+        ///     Attempt to focus a simple block element, in this case an H1
         /// </summary>
         [Fact]
         public void FocusBlockElement()
@@ -30,13 +25,11 @@ namespace FluentAutomation.Tests.Actions
         }
 
         [Fact]
-        public void FocusLink()
+        public void FocusButton()
         {
-            TextPage.Go();
-
-            I.Assert.Css("color", InputsPage.FocusColor).Not.On(TextPage.Link1Selector);
-            I.Focus(TextPage.Link1Selector)
-             .Assert.Css("color", InputsPage.FocusColor).On(TextPage.Link1Selector);
+            I.Assert.Css("color", InputsPage.FocusColor).Not.On(InputsPage.ButtonControlSelector);
+            I.Focus(InputsPage.ButtonControlSelector)
+             .Assert.Css("color", InputsPage.FocusColor).On(InputsPage.ButtonControlSelector);
         }
 
         [Fact]
@@ -60,15 +53,17 @@ namespace FluentAutomation.Tests.Actions
         }
 
         [Fact]
-        public void FocusButton()
+        public void FocusLink()
         {
-            I.Assert.Css("color", InputsPage.FocusColor).Not.On(InputsPage.ButtonControlSelector);
-            I.Focus(InputsPage.ButtonControlSelector)
-             .Assert.Css("color", InputsPage.FocusColor).On(InputsPage.ButtonControlSelector);
+            TextPage.Go();
+
+            I.Assert.Css("color", InputsPage.FocusColor).Not.On(TextPage.Link1Selector);
+            I.Focus(TextPage.Link1Selector)
+             .Assert.Css("color", InputsPage.FocusColor).On(TextPage.Link1Selector);
         }
 
         /// <summary>
-        /// Test that we can still focus elements outside of the viewport
+        ///     Test that we can still focus elements outside of the viewport
         /// </summary>
         [Fact]
         public void FocusScroll()

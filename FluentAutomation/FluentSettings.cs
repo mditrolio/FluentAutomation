@@ -1,93 +1,88 @@
-﻿using FluentAutomation.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace FluentAutomation
+﻿namespace FluentAutomation
 {
+    using System;
+    using System.Diagnostics;
+    using System.IO;
+
+    using Exceptions;
+
+    using TinyIoC;
+
     public class FluentSettings
     {
-        private static FluentSettings current = new FluentSettings();
-        public static FluentSettings Current
-        {
-            get { return current; }
-            set { current = value; }
-        }
-
         public FluentSettings()
         {
             // Toggle features on/off
-            this.WaitOnAllExpects = false;
-            this.WaitOnAllAsserts = true;
-            this.WaitOnAllActions = true;
-            this.MinimizeAllWindowsOnTestStart = false;
-            this.ScreenshotOnFailedExpect = false;
-            this.ScreenshotOnFailedAssert = false;
-            this.ScreenshotOnFailedAction = false;
-            this.ExpectIsAssert = false; // determine if Expects are treated as Asserts (v2.x behavior)
+            WaitOnAllExpects = false;
+            WaitOnAllAsserts = true;
+            WaitOnAllActions = true;
+            MinimizeAllWindowsOnTestStart = false;
+            ScreenshotOnFailedExpect = false;
+            ScreenshotOnFailedAssert = false;
+            ScreenshotOnFailedAction = false;
+            ExpectIsAssert = false; // determine if Expects are treated as Asserts (v2.x behavior)
 
             // browser size
-            this.WindowHeight = null;
-            this.WindowWidth = null;
-            this.WindowMaximized = false;
+            WindowHeight = null;
+            WindowWidth = null;
+            WindowMaximized = false;
 
             // timeouts
-            this.WaitTimeout = TimeSpan.FromSeconds(1);
-            this.WaitUntilTimeout = TimeSpan.FromSeconds(5);
-            this.WaitUntilInterval = TimeSpan.FromMilliseconds(100);
+            WaitTimeout = TimeSpan.FromSeconds(1);
+            WaitUntilTimeout = TimeSpan.FromSeconds(5);
+            WaitUntilInterval = TimeSpan.FromMilliseconds(100);
 
             // paths
-            this.UserTempDirectory = System.IO.Path.GetTempPath();
-            this.ScreenshotPath = this.UserTempDirectory;
+            UserTempDirectory = Path.GetTempPath();
+            ScreenshotPath = UserTempDirectory;
 
             // IoC registration
-            this.ContainerRegistration = (c) => { };
+            ContainerRegistration = c => { };
 
             // events
-            this.OnExpectFailed = (ex, state) =>
+            OnExpectFailed = (ex, state) =>
             {
                 var fluentException = ex.InnerException as FluentException;
                 if (fluentException != null)
-                    System.Diagnostics.Trace.WriteLine("[EXPECT FAIL] " + fluentException.Message);
+                    Trace.WriteLine("[EXPECT FAIL] " + fluentException.Message);
                 else
-                    System.Diagnostics.Trace.WriteLine("[EXPECT FAIL] " + ex.Message);
+                    Trace.WriteLine("[EXPECT FAIL] " + ex.Message);
             };
 
-            this.OnAssertFailed = (ex, state) =>
+            OnAssertFailed = (ex, state) =>
             {
                 var fluentException = ex.InnerException as FluentException;
                 if (fluentException != null)
-                    System.Diagnostics.Trace.WriteLine("[ASSERT FAIL] " + fluentException.Message);
+                    Trace.WriteLine("[ASSERT FAIL] " + fluentException.Message);
                 else
-                    System.Diagnostics.Trace.WriteLine("[ASSERT FAIL] " + ex.Message);
+                    Trace.WriteLine("[ASSERT FAIL] " + ex.Message);
             };
         }
 
-        internal FluentSettings Clone()
-        {
-            return (FluentSettings)this.MemberwiseClone();
-        }
+        public static FluentSettings Current { get; set; } = new FluentSettings();
 
-        public bool WaitOnAllExpects { get; set; }
-        public bool WaitOnAllAsserts { get; set; }
-        public bool WaitOnAllActions { get; set; }
-        public bool MinimizeAllWindowsOnTestStart { get; set; }
+        public Action<TinyIoCContainer> ContainerRegistration { get; set; }
         public bool ExpectIsAssert { get; set; }
-        public bool ScreenshotOnFailedExpect { get; set; }
-        public bool ScreenshotOnFailedAssert { get; set; }
+        public bool MinimizeAllWindowsOnTestStart { get; set; }
+        public Action<FluentAssertFailedException, WindowState> OnAssertFailed { get; set; }
+        public Action<FluentExpectFailedException, WindowState> OnExpectFailed { get; set; }
         public bool ScreenshotOnFailedAction { get; set; }
-        public int? WindowHeight { get; set; }
-        public int? WindowWidth { get; set; }
-        public bool WindowMaximized { get; set; }
-        public TimeSpan WaitTimeout { get; set; }
-        public TimeSpan WaitUntilTimeout { get; set; }
-        public TimeSpan WaitUntilInterval { get; set; }
+        public bool ScreenshotOnFailedAssert { get; set; }
+        public bool ScreenshotOnFailedExpect { get; set; }
         public string ScreenshotPath { get; set; }
         public string ScreenshotPrefix { get; set; }
         public string UserTempDirectory { get; set; }
-        public Action<TinyIoC.TinyIoCContainer> ContainerRegistration { get; set; }
-        public Action<FluentExpectFailedException, WindowState> OnExpectFailed { get; set; }
-        public Action<FluentAssertFailedException, WindowState> OnAssertFailed { get; set; }
+        public bool WaitOnAllActions { get; set; }
+        public bool WaitOnAllAsserts { get; set; }
+
+        public bool WaitOnAllExpects { get; set; }
+        public TimeSpan WaitTimeout { get; set; }
+        public TimeSpan WaitUntilInterval { get; set; }
+        public TimeSpan WaitUntilTimeout { get; set; }
+        public int? WindowHeight { get; set; }
+        public bool WindowMaximized { get; set; }
+        public int? WindowWidth { get; set; }
+
+        internal FluentSettings Clone() => (FluentSettings)MemberwiseClone();
     }
 }

@@ -1,12 +1,11 @@
-﻿using FluentAutomation.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Xunit;
-
-namespace FluentAutomation.Tests.Actions
+﻿namespace FluentAutomation.Tests.Actions
 {
+    using System;
+
+    using Exceptions;
+
+    using Xunit;
+
     public class WaitTests : BaseTest
     {
         [Fact]
@@ -29,20 +28,20 @@ namespace FluentAutomation.Tests.Actions
             With
                 .WaitUntil(TimeSpan.FromMilliseconds(60))
                 .Then
-                     .WaitUntil(() => I.Assert.True(() => true))
-                     .WaitUntil(() => I.Assert.True(() => true), TimeSpan.FromMilliseconds(50))
-                     .WaitUntil(() => true)
-                     .WaitUntil(() => true, TimeSpan.FromMilliseconds(50));
+                .WaitUntil(() => I.Assert.True(() => true))
+                .WaitUntil(() => I.Assert.True(() => true), TimeSpan.FromMilliseconds(50))
+                .WaitUntil(() => true)
+                .WaitUntil(() => true, TimeSpan.FromMilliseconds(50));
 
             // Prove that a value changing over time properly triggers
             With
                 .WaitUntil(TimeSpan.FromMilliseconds(60))
                 .WaitInterval(TimeSpan.FromMilliseconds(25))
                 .Then
-                    .WaitUntil(() => this.ThrowUntilSecondCall(ref controlInt));
+                .WaitUntil(() => ThrowUntilSecondCall(ref controlInt));
 
             controlInt = 0;
-            I.WaitUntil(() => this.ReturnBoolAndThrowUntilSecondCall(ref controlInt, null), TimeSpan.FromMilliseconds(210));
+            I.WaitUntil(() => ReturnBoolAndThrowUntilSecondCall(ref controlInt, null), TimeSpan.FromMilliseconds(210));
 
             controlInt = 0;
 
@@ -50,7 +49,7 @@ namespace FluentAutomation.Tests.Actions
                 .WaitUntil(TimeSpan.FromMilliseconds(60))
                 .WaitInterval(TimeSpan.FromMilliseconds(25))
                 .Then
-                    .WaitUntil(() => this.ToggleBoolUntilSecondCall(ref toggle, ref controlInt));
+                .WaitUntil(() => ToggleBoolUntilSecondCall(ref toggle, ref controlInt));
 
             // Will never succeed
             Assert.Throws<FluentException>(() => I.WaitUntil(() => I.Assert.True(() => false)));
@@ -62,24 +61,38 @@ namespace FluentAutomation.Tests.Actions
             Assert.Throws<FluentException>(() => I.WaitUntil(() => false, TimeSpan.FromMilliseconds(50)));
 
             controlInt = 0;
-            Assert.Throws<FluentException>(() => I.WaitUntil(() => this.ThrowUntilSecondCall(ref controlInt)));
+            Assert.Throws<FluentException>(() => I.WaitUntil(() => ThrowUntilSecondCall(ref controlInt)));
 
             controlInt = 0;
-            Assert.Throws<FluentException>(() => I.WaitUntil(() => this.ReturnBoolAndThrowUntilSecondCall(ref controlInt, new Exception())));
+            Assert.Throws<FluentException>(() => I.WaitUntil(() => ReturnBoolAndThrowUntilSecondCall(ref controlInt, new Exception())));
 
             controlInt = 0;
-            Assert.Throws<FluentException>(() => I.WaitUntil(() => this.ReturnBoolAndThrowUntilSecondCall(ref controlInt, new FluentException("Eat it"))));
+            Assert.Throws<FluentException>(() => I.WaitUntil(() => ReturnBoolAndThrowUntilSecondCall(ref controlInt, new FluentException("Eat it"))));
 
             controlInt = 0;
-            Assert.Throws<FluentException>(() => I.WaitUntil(() => this.ReturnBoolAndThrowUntilSecondCall(ref controlInt, null), TimeSpan.FromMilliseconds(5)));
+            Assert.Throws<FluentException>(() => I.WaitUntil(() => ReturnBoolAndThrowUntilSecondCall(ref controlInt, null), TimeSpan.FromMilliseconds(5)));
 
-            controlInt = 0; toggle = false;
-            Assert.Throws<FluentException>(() => I.WaitUntil(() => this.ToggleBoolUntilSecondCall(ref toggle, ref controlInt)));
+            controlInt = 0;
+            toggle = false;
+            Assert.Throws<FluentException>(() => I.WaitUntil(() => ToggleBoolUntilSecondCall(ref toggle, ref controlInt)));
 
-            controlInt = 0; toggle = false;
-            Assert.Throws<FluentException>(() => I.WaitUntil(() => this.ToggleBoolUntilSecondCall(ref toggle, ref controlInt), TimeSpan.FromMilliseconds(50)));
+            controlInt = 0;
+            toggle = false;
+            Assert.Throws<FluentException>(() => I.WaitUntil(() => ToggleBoolUntilSecondCall(ref toggle, ref controlInt), TimeSpan.FromMilliseconds(50)));
 
             Config.WaitUntilTimeout(waitUntilTimeout);
+        }
+
+        private bool ReturnBoolAndThrowUntilSecondCall(ref int controlInt, Exception ex)
+        {
+            if (controlInt == 0)
+            {
+                controlInt++;
+                I.Wait(TimeSpan.FromMilliseconds(100));
+                throw ex == null ? new FluentException("Eat it twice") : ex;
+            }
+
+            return true;
         }
 
         private void ThrowUntilSecondCall(ref int controlInt)
@@ -101,18 +114,6 @@ namespace FluentAutomation.Tests.Actions
 
             value = !value;
             return value;
-        }
-
-        private bool ReturnBoolAndThrowUntilSecondCall(ref int controlInt, Exception ex)
-        {
-            if (controlInt == 0)
-            {
-                controlInt++;
-                I.Wait(TimeSpan.FromMilliseconds(100));
-                throw ex == null ? new FluentException("Eat it twice") : ex;
-            }
-
-            return true;
         }
     }
 }

@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-
-namespace FluentAutomation
+﻿namespace FluentAutomation
 {
+    using System;
+    using System.IO;
+    using System.Linq;
+    using System.Reflection;
+
     public static class EmbeddedResources
     {
         public static string WorkingDirectory
@@ -36,19 +34,14 @@ namespace FluentAutomation
                 {
                     var filePath = Path.Combine(pathValue, fileName);
                     if (File.Exists(filePath))
-                    {
                         return filePath;
-                    }
                 }
             }
 
             return string.Empty;
         }
 
-        public static string UnpackFromAssembly(string resourceFileName, Assembly assembly)
-        {
-            return UnpackFromAssembly(resourceFileName, resourceFileName, assembly);
-        }
+        public static string UnpackFromAssembly(string resourceFileName, Assembly assembly) => UnpackFromAssembly(resourceFileName, resourceFileName, assembly);
 
         public static string UnpackFromAssembly(string resourceFileName, string outputFileName, Assembly assembly)
         {

@@ -1,85 +1,93 @@
-﻿using FluentAutomation.Exceptions;
-using FluentAutomation.Interfaces;
-using FluentAutomation.Wrappers;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Remote;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-
-namespace FluentAutomation
+﻿namespace FluentAutomation
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Reflection;
+
+    using Exceptions;
+
+    using Interfaces;
+
+    using OpenQA.Selenium;
+    using OpenQA.Selenium.Chrome;
+    using OpenQA.Selenium.Firefox;
+    using OpenQA.Selenium.PhantomJS;
+    using OpenQA.Selenium.Remote;
+
+    using Wrappers;
+
     /// <summary>
-    /// Selenium WebDriver FluentAutomation Provider
+    ///     Selenium WebDriver FluentAutomation Provider
     /// </summary>
     public class SeleniumWebDriver
     {
+        private static readonly TimeSpan DefaultCommandTimeout = TimeSpan.FromSeconds(60);
+
         /// <summary>
-        /// Supported browsers for the FluentAutomation Selenium provider.
+        ///     Supported browsers for the FluentAutomation Selenium provider.
         /// </summary>
         public enum Browser
         {
             /// <summary>
-            /// Internet Explorer. Before using, make sure to set ProtectedMode settings to be the same for all zones.
+            ///     Internet Explorer. Before using, make sure to set ProtectedMode settings to be the same for all zones.
             /// </summary>
             InternetExplorer = 1,
 
             /// <summary>
-            /// Internet Explorer (64-bit). Before using, make sure to set ProtectedMode settings to be the same for all zones.
+            ///     Internet Explorer (64-bit). Before using, make sure to set ProtectedMode settings to be the same for all zones.
             /// </summary>
             InternetExplorer64 = 2,
 
             /// <summary>
-            /// Mozilla Firefox
+            ///     Mozilla Firefox
             /// </summary>
             Firefox = 3,
 
             /// <summary>
-            /// Google Chrome
+            ///     Google Chrome
             /// </summary>
             Chrome = 4,
 
             /// <summary>
-            /// PhantomJS - Experimental - Headless browser
+            ///     PhantomJS - Experimental - Headless browser
             /// </summary>
             PhantomJs = 5,
 
             /// <summary>
-            /// Safari - Experimental - Only usable with a Remote URI
+            ///     Safari - Experimental - Only usable with a Remote URI
             /// </summary>
             Safari = 6,
 
             /// <summary>
-            /// iPad - Experimental - Only usable with a Remote URI
+            ///     iPad - Experimental - Only usable with a Remote URI
             /// </summary>
+            // ReSharper disable once InconsistentNaming
             iPad = 7,
 
             /// <summary>
-            /// iPhone - Experimental - Only usable with a Remote URI
+            ///     iPhone - Experimental - Only usable with a Remote URI
             /// </summary>
+            // ReSharper disable once InconsistentNaming
             iPhone = 8,
 
             /// <summary>
-            /// Android - Experimental - Only usable with a Remote URI
+            ///     Android - Experimental - Only usable with a Remote URI
             /// </summary>
             Android = 9
         }
 
-        private static TimeSpan DefaultCommandTimeout = TimeSpan.FromSeconds(60);
-
         /// <summary>
-        /// Bootstrap Selenium provider and utilize Firefox.
+        ///     Bootstrap Selenium provider and utilize Firefox.
         /// </summary>
         public static void Bootstrap()
         {
             Bootstrap(Browser.Firefox);
         }
-        
+
         /// <summary>
-        /// Bootstrap Selenium provider and utilize the specified <paramref name="browser"/>.
+        ///     Bootstrap Selenium provider and utilize the specified <paramref name="browser" />.
         /// </summary>
         /// <param name="browser"></param>
         public static void Bootstrap(Browser browser)
@@ -88,22 +96,22 @@ namespace FluentAutomation
         }
 
         /// <summary>
-        /// Bootstrap Selenium provider and utilize the specified <paramref name="browser"/>.
+        ///     Bootstrap Selenium provider and utilize the specified <paramref name="browser" />.
         /// </summary>
         /// <param name="browser"></param>
         public static void Bootstrap(Browser browser, TimeSpan commandTimeout)
         {
-            FluentSettings.Current.ContainerRegistration = (container) =>
+            FluentSettings.Current.ContainerRegistration = container =>
             {
                 container.Register<ICommandProvider, CommandProvider>();
                 container.Register<IAssertProvider, AssertProvider>();
                 container.Register<IFileStoreProvider, LocalFileStoreProvider>();
 
                 var browserDriver = GenerateBrowserSpecificDriver(browser, commandTimeout);
-                container.Register<IWebDriver>((c, o) => browserDriver());
+                container.Register((c, o) => browserDriver());
             };
         }
-        
+
         public static void Bootstrap(params Browser[] browsers)
         {
             Bootstrap(DefaultCommandTimeout, browsers);
@@ -117,7 +125,7 @@ namespace FluentAutomation
                 return;
             }
 
-            FluentSettings.Current.ContainerRegistration = (container) =>
+            FluentSettings.Current.ContainerRegistration = container =>
             {
                 FluentTest.IsMultiBrowserTest = true;
 
@@ -125,16 +133,16 @@ namespace FluentAutomation
                 browsers.Distinct().ToList().ForEach(x => webDrivers.Add(GenerateBrowserSpecificDriver(x, commandTimeout)));
 
                 var commandProviders = new CommandProviderList(webDrivers.Select(x => new CommandProvider(x, new LocalFileStoreProvider())));
-                container.Register<CommandProviderList>(commandProviders);
+                container.Register(commandProviders);
 
                 container.Register<ICommandProvider, MultiCommandProvider>();
                 container.Register<IAssertProvider, MultiAssertProvider>();
                 container.Register<IFileStoreProvider, LocalFileStoreProvider>();
             };
         }
-        
+
         /// <summary>
-        /// Bootstrap Selenium provider using a Remote web driver targeting the requested browser
+        ///     Bootstrap Selenium provider using a Remote web driver targeting the requested browser
         /// </summary>
         /// <param name="driverUri"></param>
         /// <param name="browser"></param>
@@ -144,14 +152,14 @@ namespace FluentAutomation
         }
 
         /// <summary>
-        /// Bootstrap Selenium provider using a Remote web driver targeting the requested browser
+        ///     Bootstrap Selenium provider using a Remote web driver targeting the requested browser
         /// </summary>
         /// <param name="driverUri"></param>
         /// <param name="browser"></param>
         /// <param name="commandTimeout"></param>
         public static void Bootstrap(Uri driverUri, Browser browser, TimeSpan commandTimeout)
         {
-            FluentSettings.Current.ContainerRegistration = (container) =>
+            FluentSettings.Current.ContainerRegistration = container =>
             {
                 container.Register<ICommandProvider, CommandProvider>();
                 container.Register<IAssertProvider, AssertProvider>();
@@ -162,9 +170,9 @@ namespace FluentAutomation
             };
         }
 
-        
+
         /// <summary>
-        /// Bootstrap Selenium provider using a Remote web driver service with the requested capabilities
+        ///     Bootstrap Selenium provider using a Remote web driver service with the requested capabilities
         /// </summary>
         /// <param name="driverUri"></param>
         /// <param name="capabilities"></param>
@@ -174,14 +182,14 @@ namespace FluentAutomation
         }
 
         /// <summary>
-        /// Bootstrap Selenium provider using a Remote web driver service with the requested capabilities
+        ///     Bootstrap Selenium provider using a Remote web driver service with the requested capabilities
         /// </summary>
         /// <param name="driverUri"></param>
         /// <param name="capabilities"></param>
         /// <param name="commandTimeout"></param>
         public static void Bootstrap(Uri driverUri, Browser browser, Dictionary<string, object> capabilities, TimeSpan commandTimeout)
         {
-            FluentSettings.Current.ContainerRegistration = (container) =>
+            FluentSettings.Current.ContainerRegistration = container =>
             {
                 container.Register<ICommandProvider, CommandProvider>();
                 container.Register<IAssertProvider, AssertProvider>();
@@ -189,14 +197,12 @@ namespace FluentAutomation
 
                 DesiredCapabilities browserCapabilities = GenerateDesiredCapabilities(browser);
                 foreach (var cap in capabilities)
-                {
                     browserCapabilities.SetCapability(cap.Key, cap.Value);
-                }
 
                 container.Register<IWebDriver, RemoteWebDriver>(new EnhancedRemoteWebDriver(driverUri, browserCapabilities, commandTimeout));
             };
         }
-        
+
         public static void Bootstrap(Uri driverUri, Dictionary<string, object> capabilities)
         {
             Bootstrap(driverUri, capabilities, DefaultCommandTimeout);
@@ -204,7 +210,7 @@ namespace FluentAutomation
 
         public static void Bootstrap(Uri driverUri, Dictionary<string, object> capabilities, TimeSpan commandTimeout)
         {
-            FluentSettings.Current.ContainerRegistration = (container) =>
+            FluentSettings.Current.ContainerRegistration = container =>
             {
                 container.Register<ICommandProvider, CommandProvider>();
                 container.Register<IAssertProvider, AssertProvider>();
@@ -215,10 +221,7 @@ namespace FluentAutomation
             };
         }
 
-        private static Func<IWebDriver> GenerateBrowserSpecificDriver(Browser browser)
-        {
-            return GenerateBrowserSpecificDriver(browser, DefaultCommandTimeout);
-        }
+        private static Func<IWebDriver> GenerateBrowserSpecificDriver(Browser browser) => GenerateBrowserSpecificDriver(browser, DefaultCommandTimeout);
 
         private static Func<IWebDriver> GenerateBrowserSpecificDriver(Browser browser, TimeSpan commandTimeout)
         {
@@ -227,20 +230,21 @@ namespace FluentAutomation
             {
                 case Browser.InternetExplorer:
                     driverPath = EmbeddedResources.UnpackFromAssembly("IEDriverServer32.exe", "IEDriverServer.exe", Assembly.GetAssembly(typeof(SeleniumWebDriver)));
-                    return new Func<IWebDriver>(() => new Wrappers.IEDriverWrapper(Path.GetDirectoryName(driverPath), commandTimeout));
+                    return () => new IEDriverWrapper(Path.GetDirectoryName(driverPath), commandTimeout);
                 case Browser.InternetExplorer64:
                     driverPath = EmbeddedResources.UnpackFromAssembly("IEDriverServer64.exe", "IEDriverServer.exe", Assembly.GetAssembly(typeof(SeleniumWebDriver)));
-                    return new Func<IWebDriver>(() => new Wrappers.IEDriverWrapper(Path.GetDirectoryName(driverPath), commandTimeout));
+                    return () => new IEDriverWrapper(Path.GetDirectoryName(driverPath), commandTimeout);
                 case Browser.Firefox:
-                    return new Func<IWebDriver>(() => {
-                        var firefoxBinary = new OpenQA.Selenium.Firefox.FirefoxBinary();
-                        return new OpenQA.Selenium.Firefox.FirefoxDriver(firefoxBinary, new OpenQA.Selenium.Firefox.FirefoxProfile
+                    return () =>
+                    {
+                        var firefoxBinary = new FirefoxBinary();
+                        return new FirefoxDriver(firefoxBinary, new FirefoxProfile
                         {
                             EnableNativeEvents = false,
                             AcceptUntrustedCertificates = true,
                             AlwaysLoadNoFocusLibrary = true
                         }, commandTimeout);
-                    });
+                    };
                 case Browser.Chrome:
                     driverPath = EmbeddedResources.UnpackFromAssembly("chromedriver.exe", Assembly.GetAssembly(typeof(SeleniumWebDriver)));
 
@@ -250,15 +254,15 @@ namespace FluentAutomation
                     var chromeOptions = new ChromeOptions();
                     chromeOptions.AddArgument("--log-level=3");
 
-                    return new Func<IWebDriver>(() => new OpenQA.Selenium.Chrome.ChromeDriver(chromeService, chromeOptions, commandTimeout));
+                    return () => new ChromeDriver(chromeService, chromeOptions, commandTimeout);
                 case Browser.PhantomJs:
                     driverPath = EmbeddedResources.UnpackFromAssembly("phantomjs.exe", Assembly.GetAssembly(typeof(SeleniumWebDriver)));
 
-                    var phantomOptions = new OpenQA.Selenium.PhantomJS.PhantomJSOptions();
-                    return new Func<IWebDriver>(() => new OpenQA.Selenium.PhantomJS.PhantomJSDriver(Path.GetDirectoryName(driverPath), phantomOptions, commandTimeout));
+                    var phantomOptions = new PhantomJSOptions();
+                    return () => new PhantomJSDriver(Path.GetDirectoryName(driverPath), phantomOptions, commandTimeout);
             }
 
-            throw new NotImplementedException("Selected browser " + browser.ToString() + " is not supported yet.");
+            throw new NotImplementedException("Selected browser " + browser + " is not supported yet.");
         }
 
         private static DesiredCapabilities GenerateDesiredCapabilities(Browser browser)
